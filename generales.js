@@ -12,10 +12,42 @@ function simular() {
         reader.onload = function(event) {
             // Store the file content as a string in localStorage
             localStorage.setItem("fileContent", JSON.stringify(event.target.result));
+            if(algo === 3 ){
+            
+                if(parseInt(document.getElementById("inputRandom").value) <= 0 || document.getElementById("inputRandom").value == ""){
+                    alert("Por favor escoja una semilla mayor a cero")
+                }
+                else if(parseInt(document.getElementById("inputProcesos").value)<=0 || document.getElementById("inputProcesos").value == ""){
+                    alert("Por favor introduzca un numero superior a cero procesos para simular")
+                }
+                else if(parseInt(document.getElementById("inputOp").value)<=0  ||  document.getElementById("inputOp").value == ""){
+                    alert("Por favor introduzca un numero superior a cero operaciones para simular")
+                }
+                else{
+                    localStorage.setItem("semilla", document.getElementById("inputRandom").value)
+                    document.location.href = "sim.html";
+                }
+                
+            }
+    
+            if(algo === 5){
+                alert("Por favor escoja un algoritmo para simular")
+            }else{
+                
+                if(parseInt(document.getElementById("inputProcesos").value)<=0 || document.getElementById("inputProcesos").value == ""){
+                    alert("Por favor introduzca un numero superior a cero procesos para simular")
+                }
+                if(parseInt(document.getElementById("inputOp").value)<=0  ||  document.getElementById("inputOp").value == ""){
+                    alert("Por favor introduzca un numero superior a cero operaciones para simular")
+                }else{
+                    document.location.href = "sim.html";
+                }
+    
+            }
           
-            document.location.href = "sim.html";
+      
         
-            parseFile();
+           
             
             
         };
@@ -125,6 +157,7 @@ function pausar(){
 }
 
 function generateCells(){
+    parseFile();
     prueba();
     var texto = localStorage.getItem("algoritmo")
     console.log(texto)

@@ -1,4 +1,4 @@
-let itPid = 0;
+let ptrid = 0;
 
 class PTR {
     constructor(pid,size){
@@ -40,7 +40,7 @@ class MMU {
     }
 
     generarPID(){
-        return itPid++;
+        return ptrid++;
     }
     /* Solicita nueva memoria de tamaño size en B y recibe de
     vuelta la dirección del puntero lógico (ptr)
@@ -49,8 +49,8 @@ class MMU {
 
     new(pid, size){
         let flag = 1;
-        let newPTR = new PTR(pid,size);
-        console.log(pid)
+        let newPTR = new PTR(this.generarPID(),size);
+        //console.log(pid)
         this.symbolTable.forEach(element => {
             console.log(element[0])
             console.log(pid)
@@ -68,23 +68,40 @@ class MMU {
             this.symbolTable.push(symbol);*/
         }
         
-
-        //let newPagina = new PAGE(this.paginas, tablaPaginasFisicas.length, 0);
-        //this.paginas++;
-
-        //this.tablaPaginasFisicas.push(newPagina.idPage);
-        /*this.memoryMap.forEach(element => {
+        this.memoryMap.forEach(element => {
             console.log(element[0]);
             console.log();
-            if(element[0]==pid){
-                element[0].push([newPTR]);
+            if(element[0]== newPTR.pid){
+                for (let i = 0; i< Math.ceil(size/pageSize); i++){
+                    //let newPagina = new PAGE(this.paginas, assignSegment(), 0);
+                    //this.paginas++;
+                    element.push(newPagina);                        
+                }
                 flag = 0;
             }
-        });*/
+        });
+        
+        if(flag){
+            let nmMap = [];
+            nmMap.push(newPtr.pid);
+            for (let i = 0; i< Math.ceil(size/pageSize); i++){
+                nmMap.push(newPagina);
+            }
+            this.memoryMap.push(nmMap);
+        }
+        
+            
+        
+        /*
+        
+        
+        //this.tablaPaginasFisicas.push(newPagina.idPage);
+        
+        
         //this.memoryMap.push()
         //symbol.push(newPagina);
         //this.memoryMap.push(symbol);
-    
+        */
         return newPTR;
     }
 
@@ -114,6 +131,12 @@ class MMU {
             // }
         }
     }
+}
+//funcion que asigna la direccion inicial de memoria de la pagina
+//esta direccion depende si hay espacio en memoreal si no replaceAlgorithm
+function assignSegment(){
+
+
 }
 
 // Ejemplo de uso:

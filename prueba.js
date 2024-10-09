@@ -35,6 +35,9 @@ class MMU {
         this.symbolTable = [];
         this.ram = 409600; // 400 KB
         this.paginas = 0;
+        this.thrashing =0;
+        this.fragmentation = 0;
+        this.clock = 0;
         this.tablaPaginasFisicas = [];
         this.tablaPaginasVirtuales = [];
 
@@ -56,6 +59,14 @@ class MMU {
         this.memoryMap.push([2, [page3]]);
         this.memoryMap.push([3, [page4]]);
     }
+    
+    miss(){
+        this.clock += 5;
+        this.thrashing += 5;
+    }
+    hit(){
+        this.clock++;
+    }
 
     generarPID(){
         return ptrid++;
@@ -64,7 +75,10 @@ class MMU {
     vuelta la dirección del puntero lógico (ptr)
     */
     
-
+    
+    //---------------------------
+    //ME FALTAN VARIAS COSAS
+    //-----------------------------
     new(pid, size){
         let flag = 1;
         let newPTR = new PTR(this.generarPID(),size);
@@ -73,7 +87,7 @@ class MMU {
             console.log(element[0])
             console.log(pid)
             if(element[0]==pid){
-                element[0].push([newPTR]);
+                element[1].push([newPTR]);
                 flag = 0;
             }
         });
@@ -88,22 +102,20 @@ class MMU {
         
         this.memoryMap.forEach(element => {
             console.log(element[0]);
-            console.log();
             if(element[0]== newPTR.pid){
                 for (let i = 0; i< Math.ceil(size/pageSize); i++){
-                    //let newPagina = new PAGE(this.paginas, assignSegment(), 0);
-                    //this.paginas++;
-                    element.push(newPagina);                        
+                    let newPagina = new PAGE(this.paginas, this.assignSegment(), 0);
+                    this.paginas++;
+                    element[1].push(newPagina);                        
                 }
                 flag = 0;
             }
         });
         
         if(flag){
-            let nmMap = [];
-            nmMap.push(newPtr.pid);
-            for (let i = 0; i< Math.ceil(size/pageSize); i++){
-                nmMap.push(newPagina);
+            let nmMap = [newPTR.pid, []];
+            for (let i = 0; i< Math.ceil(size/400); i++){
+                nmMap[1].push(newPagina);
             }
             this.memoryMap.push(nmMap);
         }
@@ -124,11 +136,27 @@ class MMU {
     }
 
     use(ptr){
-        for (let i = 0; i < this.memoryMap.length; i++) {
-            if(this.memoryMap[i][0] == ptr){
-                //console.log("PUNTERO "+PTR+" USADO");
-            }
-            
+        let flag = 0;
+        this.symbolTable.forEach(element =>{
+            element[1].forEach(pointer =>{
+                if (pointer.pid == ptr){
+                    flag = 1;
+                }
+            });
+        });
+        if (flag){
+            this.memoryMap.forEach(element =>{
+                if (element[0]== ptr){
+                    element[1].forEach(page =>{
+                        if (page.flag){
+                            this.replaceAlgorithm(page);
+                            this.miss();
+                        }else{
+                            this.hit();
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -181,13 +209,52 @@ class MMU {
 
         // deletedPIDS.push(pid);
     }
-}
-//funcion que asigna la direccion inicial de memoria de la pagina
-//esta direccion depende si hay espacio en memoreal si no replaceAlgorithm
-function assignSegment(){
 
+    replaceAlgorithm(){
+        //FIFO
+        if (algorithm==1){
+            /*this.memoryMap.forEach(element =>{
+                let pos = 0
+                element[1].forEach(page => {
+                    if (page.pointerPage == pos){
+                        
+                    }
+                });
+            });
+            return this.memoryMap*/
+            return this.paginas;
+        }
+        //SC
+        if (algorithm==2){
+            return this.paginas;
+        }
+        //MRU
+        if (algorithm==3){
+            return this.paginas;
+        }
+        //RND
+        if (algorithm==4){
+            return this.paginas;
+        }
+        //OPT
+        if (algorithm==5){
+            return this.paginas;
+        }
+    }
+    
+    //funcion que asigna la direccion inicial de memoria de la pagina
+    //esta direccion depende si hay espacio en memoreal si no replaceAlgorithm
+    assignSegment(){
+        if (this.paginas < 100){
+            return this.paginas;
+        }else{
+            //la memoria virtual esta llena por lo que se necesita el algoritmo de ramplazo
+            return replaceAlgorithm();
+        }
 
+    }
 }
+
 
 // Ejemplo de uso:
 let newMMU = new MMU();

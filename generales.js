@@ -1,10 +1,78 @@
 
 var selectedFile
 var algo = 5;
-
+var simulado = false;
+var archivo;
+var data;
+var texto;
+var blob;
+var pausado = false;
 function simular() {
+    console.log(localStorage.getItem("sim"))
 
-    selectedFile = document.getElementById("inputFile").files[0];
+    if(localStorage.getItem("sim") ==  1){
+        selectedFile = document.getElementById("inputFile").files[0];;
+        console.log(selectedFile)
+    if (selectedFile) {
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+         
+            localStorage.setItem("fileContent", JSON.stringify(event.target.result));
+            if(algo === 3 ){
+            
+               
+                if(parseInt(document.getElementById("inputRandom").value) <= 0 || document.getElementById("inputRandom").value == ""){
+                    alert("Por favor escoja una semilla mayor a cero")
+                    return;
+                }else{
+
+                    localStorage.setItem("semilla", document.getElementById("inputRandom").value)
+                    document.location.href = "visual.html";
+                }
+               
+            
+                
+                
+            }
+    
+            if(algo === 5){
+                alert("Por favor escoja un algoritmo para simular")
+            }else{
+                
+              
+                    document.location.href = "visual.html";
+                
+    
+            }
+           
+                  
+            
+            
+        };
+
+        reader.onerror = function(error) {
+            console.error("Error reading file:", error);
+        };
+
+        reader.readAsText(selectedFile); 
+    } else {
+        
+        
+        alert("Necesita ingresar un archivo para visualizarlo")
+       
+
+        }
+    }
+
+    else{
+    if(!simulado){
+
+    }else{
+
+    
+    selectedFile = blob;
+    console.log(archivo)
     
     if (selectedFile) {
         const reader = new FileReader();
@@ -17,15 +85,9 @@ function simular() {
                 if(parseInt(document.getElementById("inputRandom").value) <= 0 || document.getElementById("inputRandom").value == ""){
                     alert("Por favor escoja una semilla mayor a cero")
                 }
-                else if(parseInt(document.getElementById("inputProcesos").value)<=0 || document.getElementById("inputProcesos").value == ""){
-                    alert("Por favor introduzca un numero superior a cero procesos para simular")
-                }
-                else if(parseInt(document.getElementById("inputOp").value)<=0  ||  document.getElementById("inputOp").value == ""){
-                    alert("Por favor introduzca un numero superior a cero operaciones para simular")
-                }
                 else{
                     localStorage.setItem("semilla", document.getElementById("inputRandom").value)
-                    document.location.href = "sim.html";
+                    document.location.href = "visual.html";
                 }
                 
             }
@@ -34,14 +96,9 @@ function simular() {
                 alert("Por favor escoja un algoritmo para simular")
             }else{
                 
-                if(parseInt(document.getElementById("inputProcesos").value)<=0 || document.getElementById("inputProcesos").value == ""){
-                    alert("Por favor introduzca un numero superior a cero procesos para simular")
-                }
-                if(parseInt(document.getElementById("inputOp").value)<=0  ||  document.getElementById("inputOp").value == ""){
-                    alert("Por favor introduzca un numero superior a cero operaciones para simular")
-                }else{
-                    document.location.href = "sim.html";
-                }
+             
+                    document.location.href = "visual.html";
+                
     
             }
           
@@ -71,7 +128,7 @@ function simular() {
             }
             else{
                 localStorage.setItem("semilla", document.getElementById("inputRandom").value)
-                document.location.href = "sim.html";
+                document.location.href = "visual.html";
             }
             
         }
@@ -86,7 +143,7 @@ function simular() {
             if(parseInt(document.getElementById("inputOp").value)<=0  ||  document.getElementById("inputOp").value == ""){
                 alert("Por favor introduzca un numero superior a cero operaciones para simular")
             }else{
-                document.location.href = "sim.html";
+                document.location.href = "visual.html";
             }
 
         }
@@ -98,11 +155,30 @@ function simular() {
 
     }
      
+    }
+}
            
 }
 
-function prueba(){
-    call();
+function llamarFunc(){
+    if(parseInt(document.getElementById("inputProcesos").value)<=0 || document.getElementById("inputProcesos").value == ""){
+        alert("Por favor introduzca un numero superior a cero procesos para simular")
+    }
+    else if(parseInt(document.getElementById("inputOp").value)<=0  ||  document.getElementById("inputOp").value == ""){
+        alert("Por favor introduzca un numero superior a cero operaciones para simular")
+    }
+    else if(parseInt(document.getElementById("inputRandom").value) <= 0 || document.getElementById("inputRandom").value == ""){
+        alert("Por favor escoja una semilla mayor a cero")
+    }else{
+        simulado = true;
+        call();
+        archivo = "data.txt"
+        data = "new(1, 250):new(3, 345):use(1):use(3):delete(1):kill(2)".split(':');
+        texto = data.join('\n')
+        blob = new Blob([texto], { type: 'text/plain' });
+
+    }
+    
 }
 
 function setAlgoritmo(algoritmo){
@@ -143,6 +219,32 @@ function parseFile() {
    
     lines.forEach(line => {
         console.log(line); 
+        if (line.startsWith("new")) {
+            const args = line.match(/\(([^)]+)\)/);
+            if (args) {
+                const [arg1, arg2] = args[1].split(',').map(Number);
+                newP(arg1, arg2);
+            }
+        } else if (line.startsWith("use")) {
+            const args = line.match(/\(([^)]+)\)/);
+            if (args) {
+                const [arg] = args[1].split(',').map(Number);
+                use(arg);
+            }
+        }else if(line.startsWith("delete")){
+            const args = line.match(/\(([^)]+)\)/);
+            if (args) {
+                const [arg] = args[1].split(',').map(Number);
+                deleteP(arg);
+            }
+            
+        }else if(line.startsWith("kill")){
+            const args = line.match(/\(([^)]+)\)/);
+            if (args) {
+                const [arg] = args[1].split(',').map(Number);
+                kill(arg);
+            }
+        }
         
     });
 }
@@ -151,14 +253,52 @@ function pausar(){
 
     if(document.getElementById("pausa").textContent === "Pausar"){
         document.getElementById("pausa").textContent = "Continuar"
+        pausado = false;
     }else{
         document.getElementById("pausa").textContent = "Pausar"
+        pausado = true;
     }
+}
+
+ 
+function hacerSim(cond){
+    
+    if(cond === 0){
+        localStorage.setItem("sim", 0)
+        console.log("borrar archivo")
+    }
+    if(cond === 1){
+        localStorage.setItem("sim", 1);
+        console.log("borrar todo")
+    }
+    document.location.href = "sim.html"
+}
+
+function cargarSim(){
+    
+    if(localStorage.getItem("sim") == 0){
+       document.getElementById("labelFile").style.display = "none"
+       document.getElementById("inputFile").style.display = "none"
+       
+    }
+    if(localStorage.getItem("sim") ==  1){
+        document.getElementById("tituloSim").textContent = "Introduzca el archivo para visualizar"
+        
+        document.getElementById("simBtn").style.display = "none"
+     
+        document.getElementById("labelProc").style.display = "none"
+        document.getElementById("inputProcesos").style.display = "none"
+        document.getElementById("labelOP").style.display = "none"
+        document.getElementById("inputOp").style.display = "none"
+        document.getElementById("downloadBtn").style.display = "none"
+
+    }
+
 }
 
 function generateCells(){
     parseFile();
-    prueba();
+    
     var texto = localStorage.getItem("algoritmo")
     console.log(texto)
     document.getElementById("mmu").textContent = "MMU - " + texto
@@ -287,19 +427,22 @@ function generateCells(){
 
 
 function downloadFile(){
-
-    document.getElementById('downloadBtn').addEventListener('click', function() {
-        const data = "Hello World";
-        const blob = new Blob([data], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'data.txt';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    });
+    if(!simulado){
+        alert("Por favor cree una simulacion para poder descargar el archivo")
+    }else{
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+        
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = archivo;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    }
+    
 }
 
 

@@ -9,10 +9,11 @@ class PTR {
 }
 
 class PAGE {
-    constructor(id, pointer, flag){
+    constructor(id, pointer, flag, mark){
         this.idPage = id;
         this.pointerPage = pointer;
         this.flag = flag; // 0-FISICA / 1-VIRTUAL
+        this.mark = mark;
     }
 }
 /*ts = [{"3":[PTR, PTR]}]
@@ -38,8 +39,8 @@ class MMU {
         this.thrashing =0;
         this.fragmentation = 0;
         this.clock = 0;
+        this.algorithm = 0;
         this.tablaPaginasFisicas = [];
-        this.tablaPaginasVirtuales = [];
 
         let pnt = new PTR(1,250);
         let pnt2 = new PTR(2,50);
@@ -79,6 +80,9 @@ class MMU {
     //---------------------------
     //ME FALTAN VARIAS COSAS
     //-----------------------------
+    
+    
+
     new(pid, size){
         let flag = 1;
         let newPTR = new PTR(this.generarPID(),size);
@@ -104,7 +108,7 @@ class MMU {
             console.log(element[0]);
             if(element[0]== newPTR.pid){
                 for (let i = 0; i< Math.ceil(size/pageSize); i++){
-                    let newPagina = new PAGE(this.paginas, this.assignSegment(), 0);
+                    let newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas), 0);
                     this.paginas++;
                     element[1].push(newPagina);                        
                 }
@@ -210,9 +214,10 @@ class MMU {
         // deletedPIDS.push(pid);
     }
 
-    replaceAlgorithm(){
+    replaceAlgorithm(pagePlace){
         //FIFO
-        if (algorithm==1){
+        if (this.algorithm==1){
+            
             /*this.memoryMap.forEach(element =>{
                 let pos = 0
                 element[1].forEach(page => {
@@ -225,19 +230,19 @@ class MMU {
             return this.paginas;
         }
         //SC
-        if (algorithm==2){
+        if (this.algorithm==2){
             return this.paginas;
         }
         //MRU
-        if (algorithm==3){
+        if (this.algorithm==3){
             return this.paginas;
         }
         //RND
-        if (algorithm==4){
+        if (this.algorithm==4){
             return this.paginas;
         }
         //OPT
-        if (algorithm==5){
+        if (this.algorithm==5){
             return this.paginas;
         }
     }

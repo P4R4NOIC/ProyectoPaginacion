@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizacion</title>
+   
+    <!-- BOOTSTRAP STYLES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> 
+    
+    <!-- CSS -->
+
+    <link rel="stylesheet" href="estilos.css">
+    <!-- JS -->
+    <script type = "text/javaScript" src = "generales.js"></script>
+    <script type = "text/javaScript" src = "codigo.js"></script>
+</head>
+<body class = "body" onload = "generateCells()">
+  
+
+   
+    <table class="table table-dark table-bordered">
+        <thead>
+          <tr>
+            <th colspan="100">RAM OPT</th> 
+          </tr>
+        </thead>
+        <tbody>
+          <tr id = "prim1">
+         
+  
+            
+          </tr>
+
+        </tbody>
+    </table>
+
+
+    <table class="table table-dark table-bordered">
+        <thead>
+          <tr>
+            <th colspan="100" id = "ram">RAM - [ALG]</th> <!-- Use colspan to make it one header -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr id = prim2>
+          </tr>
+
+        </tbody>
+    </table>
+
+
+    <div class="table-container">
+      <div class = "scrollableTable">
+        <table class="table table-dark table-bordered ">
+            <thead>
+              <tr>
+                <th colspan="100">MMU - OPT</th>
+              </tr>
+            </thead>
+            <tbody id = "body1" >
+              <tr>
+                <td>PAGE ID</td>
+                <td>PID</td>
+                <td>LOADED</td>
+                <td>L-ADDR</td>
+                <td>M-ADDR</td>
+                <td>D-ADDR</td>
+                <td>LOADED-T</td>
+                <td>MARK</td>
+              </tr>
+
+            
+          
+            </tbody>
+        </table>
+      </div>
+
+
+      <div class = "scrollableTable">
+        <table class="table table-dark table-bordered ">
+            <thead>
+              <tr>
+                <th colspan="100" id = "mmu">MMU - [ALG]</th>
+              </tr>
+            </thead>
+            <tbody id = "body2">
+              <tr>
+                <td>PAGE ID</td>
+                <td>PID</td>
+                <td>LOADED</td>
+                <td>L-ADDR</td>
+                <td>M-ADDR</td>
+                <td>D-ADDR</td>
+                <td>LOADED-T</td>
+                <td>MARK</td>
+              </tr>
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-dark table-bordered ">
+            <thead>
+              <tr>
+                <th>Processes</th>
+                <th>Sim-Time</th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>5</td>
+              <td>250s</td>
+            </tr>
+            </tbody>
+            
+        </table>
+
+        <table class="table table-dark table-bordered ">
+          <thead>
+            <tr>
+              <th>Processes</th>
+              <th >Sim-Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr></tr>
+              <td>5</td>
+              <td>250s</td>
+            </tr>
+  
+          </tbody>
+          
+      </table>
+
+    </div>
+
+
+    <div class="table-container">
+      <table class="table table-dark table-bordered">
+          <thead>
+            <tr>
+              <th>RAM KB</th>
+              <th>RAM %</th>
+              <th>V-RAM KB</th>
+              <th>V-RAM %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>244</td>
+              <td>61</td>
+              <td>40</td>
+              <td>4%</td>
+            </tr>
+       
+          </tbody>
+          
+      </table>
+
+      <table class="table table-dark table-bordered">
+        <thead>
+          <tr>
+            <th>RAM KB</th>
+            <th>RAM %</th>
+            <th>V-RAM KB</th>
+            <th>V-RAM %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>244</td>
+            <td>61</td>
+            <td>40</td>
+            <td>4%</td>
+          </tr>
+        </tbody>
+        
+    </table>
+
+  </div>
+
+
+  <div class="table-container">
+    <table class="table table-dark table-bordered">
+      <thead>
+        <tr>
+            <th colspan = "4">PAGES</th>
+            <th colspan = "4" class = "rojo">Thrashing</th>
+            <th>Fragmentación</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="2">Loaded</td>
+            <td colspan = "2"> Unloaded</td>
+            <td colspan = "2" rowspan = "2" class = "rojo"> 150s</td>
+            <td colspan = "2" rowspan = "2" class = "rojo"> 60%</td>
+            <td colspan = "2" rowspan = "2"> 256KB</td>
+           
+        </tr>
+        <tr>
+            
+          <td colspan = "2">S1</td>
+          <td colspan = "2">R5</td>
+          
+        </tr>
+        
+    </tbody>
+  </table>
+
+  <table class="table table-dark table-bordered">
+    <thead>
+      <tr>
+          <th colspan = "4">PAGES</th>
+          <th colspan = "4" class = "rojo">Thrashing</th>
+          <th>Fragmentación</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td colspan="2">Loaded</td>
+          <td colspan = "2"> Unloaded</td>
+          <td colspan = "2" rowspan = "2" class = "rojo"> 150s</td>
+          <td colspan = "2" rowspan = "2" class = "rojo"> 60%</td>
+          <td colspan = "2" rowspan = "2"> 256KB</td>
+         
+      </tr>
+      <tr>
+          
+        <td colspan = "2">S1</td>
+        <td colspan = "2">R5</td>
+        
+      </tr>
+      
+  </tbody>
+</table>
+
+</div>
+
+
+<a class="button boton" type="submit" onclick = "pausar()" id = "pausa" role="button">Pausar</a> 
+<a class="button boton" type="submit" href="index.html" role="button">Volver</a> 
+
+ 
+      
+
+
+</body>
+</html>

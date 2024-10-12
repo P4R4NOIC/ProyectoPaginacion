@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio</title>
+    <title>Simular</title>
    
     <!-- BOOTSTRAP STYLES -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -12,243 +12,107 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> 
     
     <!-- CSS -->
-
-    <link rel="stylesheet" href="estilos.css">
-    <!-- JS -->
-    <script type = "text/javaScript" src = "generales.js"></script>
-    <script type = "text/javaScript" src = "codigo.js"></script>
-</head>
-<body class = "body" onload = "generateCells()">
-  
-
-   
-    <table class="table table-dark table-bordered">
-        <thead>
-          <tr>
-            <th colspan="100">RAM OPT</th> 
-          </tr>
-        </thead>
-        <tbody>
-          <tr id = "prim1">
-         
-  
-            
-          </tr>
-
-        </tbody>
-    </table>
-
-
-    <table class="table table-dark table-bordered">
-        <thead>
-          <tr>
-            <th colspan="100" id = "ram">RAM - [ALG]</th> <!-- Use colspan to make it one header -->
-          </tr>
-        </thead>
-        <tbody>
-          <tr id = prim2>
-          </tr>
-
-        </tbody>
-    </table>
-
-
-    <div class="table-container">
-      <div class = "scrollableTable">
-        <table class="table table-dark table-bordered ">
-            <thead>
-              <tr>
-                <th colspan="100">MMU - OPT</th>
-              </tr>
-            </thead>
-            <tbody id = "body1" >
-              <tr>
-                <td>PAGE ID</td>
-                <td>PID</td>
-                <td>LOADED</td>
-                <td>L-ADDR</td>
-                <td>M-ADDR</td>
-                <td>D-ADDR</td>
-                <td>LOADED-T</td>
-                <td>MARK</td>
-              </tr>
-
-            
-          
-            </tbody>
-        </table>
-      </div>
-
-
-      <div class = "scrollableTable">
-        <table class="table table-dark table-bordered ">
-            <thead>
-              <tr>
-                <th colspan="100" id = "mmu">MMU - [ALG]</th>
-              </tr>
-            </thead>
-            <tbody id = "body2">
-              <tr>
-                <td>PAGE ID</td>
-                <td>PID</td>
-                <td>LOADED</td>
-                <td>L-ADDR</td>
-                <td>M-ADDR</td>
-                <td>D-ADDR</td>
-                <td>LOADED-T</td>
-                <td>MARK</td>
-              </tr>
-            </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="table-container">
-        <table class="table table-dark table-bordered ">
-            <thead>
-              <tr>
-                <th>Processes</th>
-                <th>Sim-Time</th>
-              </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>5</td>
-              <td>250s</td>
-            </tr>
-            </tbody>
-            
-        </table>
-
-        <table class="table table-dark table-bordered ">
-          <thead>
-            <tr>
-              <th>Processes</th>
-              <th >Sim-Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr></tr>
-              <td>5</td>
-              <td>250s</td>
-            </tr>
-  
-          </tbody>
-          
-      </table>
-
-    </div>
-
-
-    <div class="table-container">
-      <table class="table table-dark table-bordered">
-          <thead>
-            <tr>
-              <th>RAM KB</th>
-              <th>RAM %</th>
-              <th>V-RAM KB</th>
-              <th>V-RAM %</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>244</td>
-              <td>61</td>
-              <td>40</td>
-              <td>4%</td>
-            </tr>
-       
-          </tbody>
-          
-      </table>
-
-      <table class="table table-dark table-bordered">
-        <thead>
-          <tr>
-            <th>RAM KB</th>
-            <th>RAM %</th>
-            <th>V-RAM KB</th>
-            <th>V-RAM %</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>244</td>
-            <td>61</td>
-            <td>40</td>
-            <td>4%</td>
-          </tr>
-        </tbody>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Inicio</title>
         
-    </table>
-
-  </div>
-
-
-  <div class="table-container">
-    <table class="table table-dark table-bordered">
-      <thead>
-        <tr>
-            <th colspan = "4">PAGES</th>
-            <th colspan = "4" class = "rojo">Thrashing</th>
-            <th>Fragmentación</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td colspan="2">Loaded</td>
-            <td colspan = "2"> Unloaded</td>
-            <td colspan = "2" rowspan = "2" class = "rojo"> 150s</td>
-            <td colspan = "2" rowspan = "2" class = "rojo"> 60%</td>
-            <td colspan = "2" rowspan = "2"> 256KB</td>
+        <!-- BOOTSTRAP STYLES -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> 
+        
+        <!-- CSS -->
+    
+        <link rel="stylesheet" href="estilos.css">
+        <!-- JS -->
+        <script type = "text/javaScript" src = "generales.js"></script>
+        <script type = "text/javaScript" src = "codigo.js"></script>
+    </head>
+    <body class = "body" onload = "cargarSim()">
+    
+    
+        <div class = "contenedor">
+        <div class = "texto-login">
+          
+        <form class="form-signin"> 
+          
+            <h1 class="form-signin-heading" id = "tituloSim">Por favor introduzca los valores para simular</h2>
            
-        </tr>
-        <tr>
+    
+            <div class = "init">
+                <label id = "labelRnd">Semila para Random</label>
+                <input type="number" id="inputRandom" class="form-control entrada" placeholder="Semilla" required="" autofocus=""> 
+            </div>
             
-          <td colspan = "2">S1</td>
-          <td colspan = "2">R5</td>
-          
-        </tr>
+            <div>
+            <label for="" id = "labelAlg">Algoritmo a Simular</label>
+            <div class="dropdown" id = "dropAlg">
+                
+                <button class="boton" id = "alg">Seleccionar</button>
+                <div class="dropdown-content">
+                  <a href="#" onclick="setAlgoritmo(0)">FIFO</a>
+                  <a href="#"onclick="setAlgoritmo(1)">SC 2</a>
+                  <a href="#"onclick="setAlgoritmo(2)">MRU</a>
+                  <a href="#"onclick="setAlgoritmo(3)">RND</a>
+                </div>
+              </div>
+            </div>
+    
+            <div class = "init">
+                <label for="" id = "labelFile">Archivo para Visualizar</label>
+                <input type="file" id="inputFile" class="form-control entrada file" placeholder="Semilla" required="" autofocus=""> 
+            </div>
+    
+            <div class = "init">
+                <label for="" id = "labelProc">Procesos a simular (10, 50, 100)</label>
+                <input type="number" id="inputProcesos" class="form-control entrada" placeholder="Procesos" required="" autofocus=""> 
+            </div>
+    
+    
+            <div class = "init">
+                <label for="" id = "labelOP">Operaciones (500, 1000, 5000)</label>
+                <input type="number" id="inputOp" class="form-control entrada" placeholder="Operaciones" required="" autofocus=""> 
+            </div>
+            
+            
+    
+    
+            <a class="button boton" onclick="llamarFunc()" role="button" id = "simBtn">Simular</a> 
+            <a class="button boton" onclick="simular()" role="button">Visualizar</a> 
+            <a class="button boton" id = "downloadBtn" type="submit" onclick="downloadFile()" role="button">Descargar</a> 
+            <a class="button boton"  type="submit" onclick="history.go(-1)" role="button">Volver</a> 
+
+            
+    
+        </form>
+    
+        </div>
+    
+        </div>
         
-    </tbody>
-  </table>
-
-  <table class="table table-dark table-bordered">
-    <thead>
-      <tr>
-          <th colspan = "4">PAGES</th>
-          <th colspan = "4" class = "rojo">Thrashing</th>
-          <th>Fragmentación</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td colspan="2">Loaded</td>
-          <td colspan = "2"> Unloaded</td>
-          <td colspan = "2" rowspan = "2" class = "rojo"> 150s</td>
-          <td colspan = "2" rowspan = "2" class = "rojo"> 60%</td>
-          <td colspan = "2" rowspan = "2"> 256KB</td>
-         
-      </tr>
-      <tr>
-          
-        <td colspan = "2">S1</td>
-        <td colspan = "2">R5</td>
+    
+    
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Entrada errónea</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                Por favor ingrese una entrada válida
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+            </div>
+        </div>
         
-      </tr>
-      
-  </tbody>
-</table>
-
-</div>
-
-
-<a class="button boton" type="submit" onclick = "pausar()" id = "pausa" role="button">Pausar</a> 
-<a class="button boton" type="submit" href="index.html" role="button">Volver</a> 
-<a class="button boton" id = "downloadBtn" type="submit" onclick="downloadFile()" role="button">Descargar</a> 
- 
-      
-
-
-</body>
-</html>
+    
+    </body>
+    </html>
+  

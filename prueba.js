@@ -38,18 +38,19 @@ class PAGE {
 
 
 class MMU {
-    constructor(){
+    constructor(algorithm){
         this.memoryMap = [];
         this.symbolTable = [];
         this.ram = 409600; // 400 KB
         this.paginas = 0;
+        this.realPages = 0;
         this.thrashing =0;
         this.fragmentation = 0;
         this.clock = 0;
-        this.algorithm = 0;
+        this.algorithm = algorithm;
         this.tablaPaginasFisicas = [];
 
-        let pnt = new PTR(1,250);
+        /*let pnt = new PTR(1,250);
         let pnt2 = new PTR(2,50);
         let pnt3 = new PTR(3,5320);
         let pnt4 = new PTR(4,345);
@@ -65,8 +66,7 @@ class MMU {
 
         this.memoryMap.push([1, [page, page2]]);
         this.memoryMap.push([2, [page3]]);
-        this.memoryMap.push([3, [page4]]);
-        this.pagesForOPT = [1,2,3,2];
+        this.memoryMap.push([3, [page4]]);*/
     }
     
     miss(){
@@ -99,19 +99,20 @@ class MMU {
             console.log(element[0])
             console.log(pid)
             if(element[0]==pid){
-                element[1].push([newPTR]);
+                element[1].push(newPTR);
                 flag = 0;
             }
         });
         if(flag){
             console.log("Process not Found");
+            return;
             /*
             let symbol = [];
             symbol.push(this.generarPID());
             symbol.push([newPTR]);
             this.symbolTable.push(symbol);*/
         }
-        
+        /*
         this.memoryMap.forEach(element => {
             console.log(element[0]);
             if(element[0]== newPTR.pid){
@@ -119,19 +120,21 @@ class MMU {
                     let newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas), 0);
                     this.pagesForOPT.push(this.paginas);
                     this.paginas++;
+                    this.realPages++;
                     element[1].push(newPagina);                        
                 }
                 flag = 0;
             }
-        });
+        });*/
         
-        if(flag){
-            let nmMap = [newPTR.pid, []];
-            for (let i = 0; i< Math.ceil(size/400); i++){
-                nmMap[1].push(newPagina);
-            }
-            this.memoryMap.push(nmMap);
+        let nmMap = [newPTR.pid, []];
+        for (let i = 0; i< Math.ceil(size/400); i++){
+            let newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas), 0, 1);
+            nmMap[1].push(newPagina);
+            this.paginas++;
         }
+        this.memoryMap.push(nmMap);
+        
         
             
         
@@ -152,24 +155,42 @@ class MMU {
         let flag = 0;
         this.symbolTable.forEach(element =>{
             element[1].forEach(pointer =>{
+                console.log(pointer[0]);
                 if (pointer.pid == ptr){
                     flag = 1;
                 }
             });
         });
+        
         if (flag){
             this.memoryMap.forEach(element =>{
                 if (element[0]== ptr){
                     element[1].forEach(page =>{
                         if (page.flag){
-                            this.replaceAlgorithm(page);
-                            this.miss();
+                            let replaceFlag = 1;
+                            for (let i = 0; i < this.tablaPaginasFisicas.length; i++){
+                                if (this.tablaPaginasFisicas[i] == -1){
+                                    this.tablaPaginasFisicas[i] = page.idPage;
+                                    page.pointerPage = i;
+                                    page.flag = 0;
+                                    replaceFlag = 0;
+                                    this.realPages++;
+                                    this.miss();
+                                }
+                            }
+                            if (replaceFlag){
+                                page.pointerPage = this.replaceAlgorithm(page.idPage);
+                                this.miss();
+                            }
                         }else{
                             this.hit();
                         }
                     });
+                    return;
                 }
             });
+        }else{
+            console.log("Pointer not found.")
         }
     }
 
@@ -177,6 +198,15 @@ class MMU {
     // eliminar toda las paginas del ptr y el ptr del memoMap
     // en la parte de creacion de operaciones este existira si existe un ptr en la ts
     delete(ptr){
+        //update de dylan cambio en la tablaPaginasFisicas
+        this.memoryMap.forEach(element =>{
+            if (ptr == element[0]){
+                element[1].forEach(page =>{
+                    this.tablaPaginasFisicas[page.pointerPage] = -1;
+                });   
+            }
+        });
+        //-------------------------------------------------
         let lista = this.symbolTable;
         let mensaje = "No se encontro el puntero";
         lista.forEach(ptrList => {
@@ -223,10 +253,30 @@ class MMU {
         // deletedPIDS.push(pid);
     }
 
-    replaceAlgorithm(pagePlace){
+    replaceAlgorithm(pagetoPlace){
         //FIFO
         if (this.algorithm==1){
-            
+            let pageReplaced = this.tablaPaginasFisicas.shift();
+            for (let i = 0; i < this.tablaPaginasFisicas.length;i++){
+                this.memoryMap.forEach(element =>{
+                    element[1].forEach(page =>{
+                        if(page.idPage == this.tablaPaginasFisicas[i]){
+                            page.pointerPage = i;
+                        }
+                        if(page.idPage == pageReplaced){
+                            page.pointerPage = (page.idPage*-1)-1;
+                            page.flag = 1;
+                        }
+                        if (page.idPage == pagetoPlace){
+                            page.flag = 0;
+                        }
+                    });
+                });
+            }
+            let segmentpos = this.tablaPaginasFisicas.length;
+            this.tablaPaginasFisicas.push(pagetoPlace);
+            return segmentpos;
+
             /*this.memoryMap.forEach(element =>{
                 let pos = 0
                 element[1].forEach(page => {
@@ -236,11 +286,54 @@ class MMU {
                 });
             });
             return this.memoryMap*/
-            return this.paginas;
+            //return this.paginas;
         }
         //SC
         if (this.algorithm==2){
-            return this.paginas;
+            let pageReplaced;
+            let segmentpos;
+            for (let i = 0; i < 4; i++){
+                let done = 0;
+                pageReplaced = this.tablaPaginasFisicas.shift();
+                this.memoryMap.forEach(element =>{
+                    element[1].forEach(page =>{
+                        if(pageReplaced == page.idPage){
+                            if(page.mark){
+                                page.mark = 0;
+                                this.tablaPaginasFisicas.push(page.idPage);
+                            }else{
+                                this.tablaPaginasFisicas.push(pagetoPlace);
+                                done = 1;
+                            }
+                        }
+                        
+                    });
+                });
+                if (done){
+                    break;
+                }
+            }
+            for (let i = 0; i < this.tablaPaginasFisicas.length;i++){
+                this.memoryMap.forEach(element =>{
+                    element[1].forEach(page =>{
+                        if (page.idPage == this.tablaPaginasFisicas[i]){
+                            page.pointerPage = i;
+                        }
+                        if (page.idPage == pageReplaced){
+                            page.flag = 1;
+                            page.pointerPage = (page.idPage*-1)-1;
+                            page.mark = 1;
+                        }
+                        if (page.idPage == pagetoPlace){
+                            page.flag = 0;
+                            page.mark = 1;
+                            segmentpos = i;
+
+                        }
+                    });
+                });
+            }
+            return segmentpos;
         }
         //MRU
         if (this.algorithm==3){
@@ -258,12 +351,27 @@ class MMU {
     
     //funcion que asigna la direccion inicial de memoria de la pagina
     //esta direccion depende si hay espacio en memoreal si no replaceAlgorithm
-    assignSegment(){
-        if (this.paginas < 100){
+    assignSegment(pageIdentifier){
+        if (this.paginas < 4){
+            this.realPages++;
+            this.tablaPaginasFisicas.push(pageIdentifier);
+            this.hit();
             return this.paginas;
         }else{
+            if (this.realPages < 4){
+                for (let i = 0; i< this.tablaPaginasFisicas.length;i++){
+                    if (this.tablaPaginasFisicas[i] == -1){
+                        this.tablaPaginasFisicas[i] = pageIdentifier;
+                        this.realPages++;
+                        this.hit();
+                        return i;
+                    }
+                }
+            }else{
             //la memoria virtual esta llena por lo que se necesita el algoritmo de ramplazo
-            return replaceAlgorithm();
+                this.miss();
+                return this.replaceAlgorithm(pageIdentifier);
+            }
         }
 
     }
@@ -361,8 +469,23 @@ class MMU {
 
 
 // Ejemplo de uso:
-let newMMU = new MMU();
-// newMMU.new(1,250);
+let newMMU = new MMU(2);
+newMMU.symbolTable.push([1, []]);
+newMMU.new(1,250);
+console.log(newMMU.tablaPaginasFisicas);
+newMMU.new(1,500);
+console.log(newMMU.tablaPaginasFisicas);
+newMMU.new(1,500);
+console.log(newMMU.tablaPaginasFisicas);
+newMMU.new(1,250);
+console.log(newMMU.tablaPaginasFisicas);
+newMMU.new(1,250);
+console.log(newMMU.tablaPaginasFisicas);
+newMMU.use(0);
+console.log(newMMU.tablaPaginasFisicas);
+newMMU.use(2);
+console.log(newMMU.tablaPaginasFisicas);
+
 // newMMU.new(1,50);
 // newMMU.new(2,5320);
 // newMMU.new(3,345);
@@ -370,11 +493,11 @@ let newMMU = new MMU();
 // newMMU.use(3);
 // newMMU.use(2);
 // newMMU.use(1);
+console.log(newMMU.memoryMap);
+console.log(newMMU.tablaPaginasFisicas);
+//newMMU.delete(1);
+//newMMU.kill(1);
+//newMMU.kill(2);
+//newMMU.kill(3);
 console.log(newMMU);
-newMMU.delete(1);
-newMMU.kill(1);
-newMMU.kill(2);
-newMMU.kill(3);
-console.log(newMMU);
-newMMU.optimalPage();
 

@@ -42,6 +42,13 @@ class PAGE {
 */
 //mp = [ptr1:[page, page], ptr2:[page, page]]
 
+// [pid, [PTR, PTR]] id del Proceso y punteros
+// ts = [[1, [PTR, PTR]], [2, [PTR, PTR]]] 
+
+//[ptr.pid, [PAGE, PAGE]] id del puntero y paginas
+// memoryMap = [[1, [PAGE, PAGE]], [2, [PAGE, PAGE]]] 
+
+
 class MMU {
     constructor(algorithm, seed){
         this.memoryMap = [];
@@ -54,6 +61,8 @@ class MMU {
         this.clock = 0;
         this.algorithm = algorithm;
         this.tablaPaginasFisicas = [];
+        this.pagesForOPT = [];
+
         this.randomGenerator = new Random(seed);
         /*let pnt = new PTR(1,250);
         let pnt2 = new PTR(2,50);
@@ -72,6 +81,7 @@ class MMU {
         this.memoryMap.push([1, [page, page2]]);
         this.memoryMap.push([2, [page3]]);
         this.memoryMap.push([3, [page4]]);*/
+        this.fr = [];
     }
     
     miss(){
@@ -94,8 +104,8 @@ class MMU {
         let newPTR = new PTR(this.generarPID(),size);
         //console.log(pid)
         this.symbolTable.forEach(element => {
-            console.log(element[0])
-            console.log(pid)
+            //console.log(element[0])
+            //console.log(pid)
             if(element[0]==pid){
                 element[1].push(newPTR);
                 flag = 0;
@@ -278,6 +288,12 @@ class MMU {
             this.tablaPaginasFisicas.push(pageIdentifier);
             console.log(pageIdentifier);
             this.hit();
+            if(this.algorithm!=5){
+                this.pagesForOPT.push(pageIdentifier);
+            }
+            if(this.algorithm==5){
+                this.pagesForOPT.shift();
+            }
             this.runMRUClock(ptrIdentifier);
             return this.paginas;
         }else{
@@ -289,6 +305,12 @@ class MMU {
                         this.realPages++;
                         this.runMRUClock(ptrIdentifier);
                         this.hit();
+                        if(this.algorithm!=5){
+                            this.pagesForOPT.push(pageIdentifier);
+                        }
+                        if(this.algorithm==5){
+                            this.pagesForOPT.shift();
+                        }
                         return i;
                     }
                 }
@@ -302,6 +324,9 @@ class MMU {
     }
 
     replaceAlgorithm(pagetoPlace, ptrOfPage){
+        if(this.algorithm!=5){
+            this.pagesForOPT.push(pagetoPlace);
+        }
         //FIFO
         if (this.algorithm==1){
             let pageReplaced = this.tablaPaginasFisicas.shift();
@@ -323,6 +348,7 @@ class MMU {
             }
             let segmentpos = this.tablaPaginasFisicas.length;
             this.tablaPaginasFisicas.push(pagetoPlace);
+            
             return segmentpos;
         }
         //SC
@@ -439,7 +465,46 @@ class MMU {
         //----------------------------------------------------------
         //OPT
         if (this.algorithm==5){
-            return this.paginas;
+            let pageToPlace = this.pagesForOPT.shift();  // Página a colocar
+            let pageToReplace = -1;  // Índice de la página que será reemplazada
+            let farthestUse = -1;    // Índice más lejano de reutilización
+
+            // Buscar la página que será reemplazada en tablaPaginasFisicas
+            this.tablaPaginasFisicas.forEach((idPage, index) => {
+                let futureIndex = this.pagesForOPT.indexOf(idPage);  // Próxima aparición del ID
+
+                if (futureIndex === -1) {
+                    // Si la página no se usará más, marcar para reemplazo inmediato
+                    pageToReplace = index;
+                    farthestUse = Infinity;  // Priorizar esta página para reemplazo
+                } else if (futureIndex > farthestUse) {
+                    // Encontrar la página cuyo uso está más lejos en el futuro
+                    farthestUse = futureIndex;
+                    pageToReplace = index;
+                }
+            });
+
+            // Realizar el reemplazo en tablaPaginasFisicas
+            let replacedPage = this.tablaPaginasFisicas[pageToReplace];
+            this.tablaPaginasFisicas[pageToReplace] = pageToPlace;
+
+            // Actualizar el memoryMap para reflejar el reemplazo
+            this.memoryMap.forEach(segment => {
+                segment[1].forEach(page => {
+                    if (page.idPage == replacedPage) {
+                        // Marcar la página reemplazada como inactiva
+                        page.flag = 1;
+                        page.pointerPage = (page.idPage * -1) - 1;
+                    }
+                    if (page.idPage == pageToPlace) {
+                        // Marcar la nueva página como activa
+                        page.flag = 0;
+                    }
+                });
+            });
+
+            console.log(`Página colocada: ${pageToPlace}, Página reemplazada: ${replacedPage}`);
+            return pageToReplace;  // Retornar la posición del segmento afectado
         }
     }
     
@@ -484,6 +549,25 @@ newMMU.use(2);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 
+let newMMU2 = new MMU(5);
+newMMU2.symbolTable.push([1, []]);
+newMMU2.pagesForOPT = newMMU.pagesForOPT;
+console.log(newMMU2.pagesForOPT)
+newMMU2.new(1,250);
+console.log(newMMU2.tablaPaginasFisicas);
+console.log(newMMU2.memoryMap);
+newMMU2.new(1,250);
+console.log(newMMU2.tablaPaginasFisicas);
+console.log(newMMU2.memoryMap);
+newMMU2.new(1,250);
+console.log(newMMU2.tablaPaginasFisicas);
+console.log(newMMU2.memoryMap);
+newMMU2.new(1,250);
+console.log(newMMU2.tablaPaginasFisicas);
+console.log(newMMU2.memoryMap);
+newMMU2.new(1,250);
+console.log(newMMU2.tablaPaginasFisicas);
+console.log(newMMU2.memoryMap);
 // newMMU.new(1,50);
 // newMMU.new(2,5320);
 // newMMU.new(3,345);
@@ -491,11 +575,11 @@ console.log(newMMU.memoryMap);
 // newMMU.use(3);
 // newMMU.use(2);
 // newMMU.use(1);
-console.log(newMMU.memoryMap);
-console.log(newMMU.tablaPaginasFisicas);
+//console.log(newMMU.memoryMap);
+//console.log(newMMU.tablaPaginasFisicas);
 //newMMU.delete(1);
 //newMMU.kill(1);
 //newMMU.kill(2);
 //newMMU.kill(3);
-console.log(newMMU);
+//console.log(newMMU);
 

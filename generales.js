@@ -7,12 +7,11 @@ var data;
 var texto;
 var blob;
 var pausado = false;
+var selectedMMU;
 function simular() {
-    
 
     if(localStorage.getItem("sim") ==  1){
         selectedFile = document.getElementById("inputFile").files[0];;
-     
     if (selectedFile) {
         const reader = new FileReader();
         
@@ -72,7 +71,6 @@ function simular() {
 
     
     selectedFile = blob;
-    
     
     if (selectedFile) {
         const reader = new FileReader();
@@ -173,7 +171,7 @@ function llamarFunc(){
         simulado = true;
         call();
         archivo = "data.txt"
-        data = "new(1, 250):new(3, 345):use(1):use(3):delete(1):kill(2)".split(':');
+        data = "new(1, 250):new(1, 345):use(1):use(1):delete(0):kill(1)".split(':');
         texto = data.join('\n')
         blob = new Blob([texto], { type: 'text/plain' });
 
@@ -217,6 +215,29 @@ function parseFile() {
     const lines = fileContent.split('\n'); 
 
    
+    //CREACION MMU
+    let nombreAlgoritmo = localStorage.getItem("algoritmo");
+    let semilla = +localStorage.getItem("semilla");
+
+    let numeroAlgoritmo = 0;
+    if(nombreAlgoritmo=="FIFO"){
+        numeroAlgoritmo=1;
+    }
+    if(nombreAlgoritmo=="SC2"){
+        numeroAlgoritmo=2;
+    }
+    if(nombreAlgoritmo=="MRU"){
+        numeroAlgoritmo=3;
+    }
+    if(nombreAlgoritmo=="RND"){
+        numeroAlgoritmo=4;
+    }
+    
+    selectedMMU = new MMU(numeroAlgoritmo, semilla);
+    selectedMMU.algorithm = numeroAlgoritmo;
+    selectedMMU.symbolTable.push([1, []]);
+    //FIN MMU
+
     lines.forEach(line => {
         console.log(line); 
         if (line.startsWith("new")) {
@@ -265,11 +286,9 @@ function hacerSim(cond){
     
     if(cond === 0){
         localStorage.setItem("sim", 0)
-       
     }
     if(cond === 1){
         localStorage.setItem("sim", 1);
-        
     }
     document.location.href = "sim.html"
 }
@@ -300,7 +319,6 @@ function generateCells(){
     parseFile();
     
     var texto = localStorage.getItem("algoritmo")
-   
     document.getElementById("mmu").textContent = "MMU - " + texto
     document.getElementById("ram").textContent = "RAM - " + texto
     for(var i = 0; i<100; i++){

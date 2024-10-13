@@ -1,7 +1,6 @@
 let fr = [];
 let hit = 0;
-let i = 0;  // Almacena la posición actual en el array de páginas
-
+let miss = 0;
 function search(key, fr) {
     for (let i = 0; i < fr.length; i++) {
         if (fr[i] === key) {
@@ -11,11 +10,13 @@ function search(key, fr) {
     return false;
 }
 
-function predict(pg, fr, pn, index) {
-    let res = -1, farthest = index;
+function predict(pg, fr) {
+    let res = -1, farthest = -1;
+
+    // Predecir qué página será reemplazada
     for (let i = 0; i < fr.length; i++) {
         let j;
-        for (j = index; j < pn; j++) {
+        for (j = 0; j < pg.length; j++) {
             if (fr[i] === pg[j]) {
                 if (j > farthest) {
                     farthest = j;
@@ -24,55 +25,55 @@ function predict(pg, fr, pn, index) {
                 break;
             }
         }
-        if (j === pn) {
-            return i;
-        }
+        // Si la página no se usará de nuevo, devolver su posición
+        if (j === pg.length) return i;
     }
+
+    // Devolver la posición más lejana o la primera por defecto
     return (res === -1) ? 0 : res;
 }
 
-function optimalPage(pg, pn, fn) {
-    if (i >= pn) {
+function optimalPage(pg, fn) {
+    if (pg.length === 0) {
         console.log("No. of hits = " + hit);
-        console.log("No. of misses = " + (pn - hit));
+        console.log("No. of misses = " + miss);
+        console.log("Clock",hit+5*miss);
         return;
     }
 
-    // Page found in a frame : HIT
-    if (search(pg[i], fr)) {
-        hit++;
+    let currentPage = pg[0];  // Tomar la primera página sin eliminarla
+
+    if (search(currentPage, fr)) {
+        hit++;  // HIT: La página ya está en los marcos
     } else {
-        // Page not found in a frame : MISS
         if (fr.length < fn) {
-            fr.push(pg[i]);
+            fr.push(currentPage);  // Agregar la página si hay espacio
+            hit++;  // Considerar esto también como un HIT
         } else {
-            let j = predict(pg, fr, pn, i + 1);
-            fr[j] = pg[i];
+            miss++;
+            let j = predict(pg.slice(1), fr);  // Predecir cuál reemplazar
+            fr[j] = currentPage;  // Reemplazar la página predicha
         }
     }
 
-    i++;  // Incrementar la posición para la siguiente iteración
-    console.log(`Iteración ${i}: Estado de marcos = `, fr);
+    console.log(`Página: ${currentPage} | Estado de marcos:`, fr);
+
+    pg.shift();  // Eliminar la primera página después de procesarla
 }
 
 let pg = [7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2];
-let pn = pg.length;
-let fn = 3;
+pg = [ 0, 1, 2, 3, 4, 5, 6, 0, 3, 4 ];
+let fn = 4;
 
 // Llamas a optimalPage() tantas veces como iteraciones quieras
-optimalPage(pg, pn, fn);  // Primera iteración
-optimalPage(pg, pn, fn);  // Segunda iteración
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-optimalPage(pg, pn, fn);
-
-// Continúa llamando a optimalPage() en cada iteración
+optimalPage(pg, fn);  // Primera iteración
+optimalPage(pg, fn);  // Segunda iteración
+optimalPage(pg, fn);
+optimalPage(pg, fn);
+optimalPage(pg, fn);
+optimalPage(pg, fn);
+optimalPage(pg, fn);
+optimalPage(pg, fn);
+optimalPage(pg, fn);
+optimalPage(pg, fn);
+optimalPage(pg, fn);

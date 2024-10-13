@@ -1,4 +1,15 @@
 let ptrid = 0;
+class Random {
+    constructor(seed) {
+        this.seed = seed;
+    }
+
+    random(min, max) {
+        // Generador de congruencia lineal
+        this.seed = (this.seed * 48271) % 2147483647;
+        return Math.floor((this.seed / 2147483647)*(max-min+1)) + min; // Devuelve un número entre 0 y 1
+    }
+}
 
 class PTR {
     constructor(pid,size){
@@ -32,7 +43,7 @@ class PAGE {
 //mp = [ptr1:[page, page], ptr2:[page, page]]
 
 class MMU {
-    constructor(algorithm){
+    constructor(algorithm, seed){
         this.memoryMap = [];
         this.symbolTable = [];
         this.ram = 409600; // 400 KB
@@ -43,7 +54,7 @@ class MMU {
         this.clock = 0;
         this.algorithm = algorithm;
         this.tablaPaginasFisicas = [];
-
+        this.randomGenerator = new Random(seed);
         /*let pnt = new PTR(1,250);
         let pnt2 = new PTR(2,50);
         let pnt3 = new PTR(3,5320);
@@ -78,13 +89,6 @@ class MMU {
     vuelta la dirección del puntero lógico (ptr)
     */
     
-    
-    //---------------------------
-    //ME FALTAN VARIAS COSAS
-    //-----------------------------
-    
-    
-
     new(pid, size){
         let flag = 1;
         let newPTR = new PTR(this.generarPID(),size);
@@ -100,25 +104,9 @@ class MMU {
         if(flag){
             console.log("Process not Found");
             return;
-            /*
-            let symbol = [];
-            symbol.push(this.generarPID());
-            symbol.push([newPTR]);
-            this.symbolTable.push(symbol);*/
+            
         }
-        /*
-        this.memoryMap.forEach(element => {
-            console.log(element[0]);
-            if(element[0]== newPTR.pid){
-                for (let i = 0; i< Math.ceil(size/pageSize); i++){
-                    let newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas), 0);
-                    this.paginas++;
-                    this.realPages++;
-                    element[1].push(newPagina);                        
-                }
-                flag = 0;
-            }
-        });*/
+        
         
         let nmMap = [newPTR.pid, []];
         this.memoryMap.push(nmMap);
@@ -128,20 +116,6 @@ class MMU {
             this.paginas++;
         }
         
-        
-        
-            
-        
-        /*
-        
-        
-        //this.tablaPaginasFisicas.push(newPagina.idPage);
-        
-        
-        //this.memoryMap.push()
-        //symbol.push(newPagina);
-        //this.memoryMap.push(symbol);
-        */
         return newPTR;
     }
 
@@ -350,17 +324,6 @@ class MMU {
             let segmentpos = this.tablaPaginasFisicas.length;
             this.tablaPaginasFisicas.push(pagetoPlace);
             return segmentpos;
-
-            /*this.memoryMap.forEach(element =>{
-                let pos = 0
-                element[1].forEach(page => {
-                    if (page.pointerPage == pos){
-                        
-                    }
-                });
-            });
-            return this.memoryMap*/
-            //return this.paginas;
         }
         //SC
         if (this.algorithm==2){
@@ -445,9 +408,35 @@ class MMU {
             return segmentpos;
         }
         //RND
+        //-----------------------------------------------------------------------------------------
         if (this.algorithm==4){
-            return this.paginas;
+            let segmentpos;
+            let pageReplaced = this.randomGenerator.random(0, this.tablaPaginasFisicas.length-1);
+            let done = 1;
+            while(done){
+                for(let element of this.memoryMap){
+                    element[1].forEach(page =>{
+                        console.log();
+                    });   
+                }
+            }
+            /*this.tablaPaginasFisicas[segmentpos] = pagetoPlace;
+            for(let element of this.memoryMap){
+                if (element[0] != ptrOfPage){
+                    element[1].forEach(page =>{
+                        if (page.idPage == pagetoPlace){
+                            page.flag = 0;
+                        }
+                        if(page.idPage == pageReplaced){
+                            page.flag = 1;
+                            page.pointerPage = (page.idPage*-1)-1;
+                        }
+                    });
+                }
+            }*/
+            return segmentpos;
         }
+        //----------------------------------------------------------
         //OPT
         if (this.algorithm==5){
             return this.paginas;
@@ -464,29 +453,25 @@ newMMU.symbolTable.push([1, []]);
 newMMU.new(1,250);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
-newMMU.new(1,250);
+newMMU.new(1,500);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 newMMU.new(1,250);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
-newMMU.new(1,250);
+newMMU.new(1,500);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 newMMU.new(1,250);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
-/*newMMU.new(1,500);
-newMMU.new(1,250);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);*/
-/*newMMU.use(1);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);*/
-/*newMMU.new(1,250);
+newMMU.use(1);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
-newMMU.delete(2);
+newMMU.new(1,250);
+console.log(newMMU.tablaPaginasFisicas);
+console.log(newMMU.memoryMap);
+newMMU.delete(1);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 newMMU.new(1,250);
@@ -495,41 +480,9 @@ console.log(newMMU.memoryMap);
 newMMU.use(0);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
-
-newMMU.use(2);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);*/
-
-
-/*
-newMMU.new(1,250);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);
-console.log(newMMU.clock);
-newMMU.new(1,500);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);
-console.log(newMMU.clock);
-newMMU.new(1,500);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);
-console.log(newMMU.clock);
-newMMU.new(1,250);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);
-console.log(newMMU.clock);
-newMMU.new(1,250);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);
-newMMU.use(0);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);
-console.log(newMMU.clock);
 newMMU.use(2);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
-*/
-
 
 // newMMU.new(1,50);
 // newMMU.new(2,5320);

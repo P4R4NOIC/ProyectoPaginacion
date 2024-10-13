@@ -1,4 +1,4 @@
-let ptrid = 0;
+
 class Random {
     constructor(seed) {
         this.seed = seed;
@@ -62,6 +62,7 @@ class MMU {
         this.algorithm = algorithm;
         this.tablaPaginasFisicas = [];
         this.pagesForOPT = [];
+        this.ptrid = 0;
 
         this.randomGenerator = new Random(seed);
         /*let pnt = new PTR(1,250);
@@ -81,7 +82,6 @@ class MMU {
         this.memoryMap.push([1, [page, page2]]);
         this.memoryMap.push([2, [page3]]);
         this.memoryMap.push([3, [page4]]);*/
-        this.fr = [];
     }
     
     miss(){
@@ -93,7 +93,7 @@ class MMU {
     }
 
     generarPID(){
-        return ptrid++;
+        return this.ptrid++;
     }
     /* Solicita nueva memoria de tamaño size en B y recibe de
     vuelta la dirección del puntero lógico (ptr)
@@ -143,7 +143,15 @@ class MMU {
         if (flag){
             this.memoryMap.forEach(element =>{
                 if (element[0]== ptr){
+                    if(this.algorithm==5){
+                        for (let i = 0; i < element[1].length; i++) {
+                            console.log(this.pagesForOPT);
+                            this.pagesForOPT.shift();
+                            console.log(this.pagesForOPT);
+                        }
+                    }
                     element[1].forEach(page =>{
+                        
                         if (page.flag){
                             let replaceFlag = 1;
                             for (let i = 0; i < this.tablaPaginasFisicas.length; i++){
@@ -155,6 +163,9 @@ class MMU {
                                     this.realPages++;
                                     this.hit();
                                     this.runMRUClock(ptr);
+                                    if(this.algorithm!=5){
+                                        this.pagesForOPT.push(page.idPage);
+                                    }
                                     break;
                                 }
                             }
@@ -166,6 +177,9 @@ class MMU {
                             //SC
                             if (this.algorithm == 2){
                                 page.mark = 1;
+                            }
+                            if(this.algorithm!=5){
+                                this.pagesForOPT.push(page.idPage);
                             }
                             this.runMRUClock(ptr);
                             this.hit();
@@ -541,6 +555,7 @@ console.log(newMMU.ram);
 /*newMMU.new(1,250);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
+
 newMMU.use(1);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
@@ -568,16 +583,13 @@ console.log(newMMU2.pagesForOPT)
 newMMU2.new(1,250);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
-newMMU2.new(1,250);
+newMMU2.new(1,500);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
 newMMU2.new(1,250);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
-newMMU2.new(1,250);
-console.log(newMMU2.tablaPaginasFisicas);
-console.log(newMMU2.memoryMap);
-newMMU2.new(1,250);
+newMMU2.new(1,500);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
 console.log(newMMU2.clock);

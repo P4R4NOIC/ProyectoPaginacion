@@ -8,11 +8,11 @@ var texto;
 var blob;
 var pausado = false;
 function simular() {
-    console.log(localStorage.getItem("sim"))
+    
 
     if(localStorage.getItem("sim") ==  1){
         selectedFile = document.getElementById("inputFile").files[0];;
-        console.log(selectedFile)
+     
     if (selectedFile) {
         const reader = new FileReader();
         
@@ -72,7 +72,7 @@ function simular() {
 
     
     selectedFile = blob;
-    console.log(archivo)
+    
     
     if (selectedFile) {
         const reader = new FileReader();
@@ -265,11 +265,11 @@ function hacerSim(cond){
     
     if(cond === 0){
         localStorage.setItem("sim", 0)
-        console.log("borrar archivo")
+       
     }
     if(cond === 1){
         localStorage.setItem("sim", 1);
-        console.log("borrar todo")
+        
     }
     document.location.href = "sim.html"
 }
@@ -300,7 +300,7 @@ function generateCells(){
     parseFile();
     
     var texto = localStorage.getItem("algoritmo")
-    console.log(texto)
+   
     document.getElementById("mmu").textContent = "MMU - " + texto
     document.getElementById("ram").textContent = "RAM - " + texto
     for(var i = 0; i<100; i++){

@@ -356,7 +356,23 @@ class MMU {
         }
         //FIFO
         if (this.algorithm==1){
-            let pageReplaced = this.tablaPaginasFisicas.shift();
+            let done = 1;
+            let pageReplaced;
+            while (done){
+                pageReplaced = this.tablaPaginasFisicas.shift();
+                this.memoryMap.forEach(element =>{
+                    element[1].forEach(page =>{
+                        if(page.idPage == pageReplaced ){
+                            if(element[0] == ptrOfPage){
+                                this.tablaPaginasFisicas.push(pageReplaced);
+                            }else{
+                                done =  0;
+                            }
+                        }
+                    
+                    });
+                });
+            }
             for (let i = 0; i < this.tablaPaginasFisicas.length;i++){
                 this.memoryMap.forEach(element =>{
                     element[1].forEach(page =>{
@@ -370,6 +386,7 @@ class MMU {
                         if (page.idPage == pagetoPlace){
                             page.flag = 0;
                         }
+                        
                     });
                 });
             }
@@ -607,12 +624,12 @@ newMMU.new(1,2500);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 console.log(newMMU.ram);
-console.log(newMMU.vram);
+console.log(newMMU.clock);
 newMMU.use(0);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 console.log(newMMU.ram);
-console.log(newMMU.vram);
+console.log(newMMU.clock);
 newMMU.new(1,8006);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);

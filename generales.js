@@ -7,7 +7,10 @@ var data;
 var texto;
 var blob;
 var pausado = false;
+var firstTimeMMU;
 var selectedMMU;
+var optMMU;
+var currentIndex = 0;
 function simular() {
 
     if(localStorage.getItem("sim") ==  1){
@@ -233,8 +236,9 @@ function parseFile() {
         numeroAlgoritmo=4;
     }
     
+    firstTimeMMU = new MMU(numeroAlgoritmo, semilla);
+    firstTimeMMU.symbolTable.push([1, []]);
     selectedMMU = new MMU(numeroAlgoritmo, semilla);
-    selectedMMU.algorithm = numeroAlgoritmo;
     selectedMMU.symbolTable.push([1, []]);
     //FIN MMU
 
@@ -244,40 +248,107 @@ function parseFile() {
             const args = line.match(/\(([^)]+)\)/);
             if (args) {
                 const [arg1, arg2] = args[1].split(',').map(Number);
-                newP(arg1, arg2);
+                newP(firstTimeMMU, arg1, arg2);
             }
         } else if (line.startsWith("use")) {
             const args = line.match(/\(([^)]+)\)/);
             if (args) {
                 const [arg] = args[1].split(',').map(Number);
-                use(arg);
+                use(firstTimeMMU, arg);
             }
         }else if(line.startsWith("delete")){
             const args = line.match(/\(([^)]+)\)/);
             if (args) {
                 const [arg] = args[1].split(',').map(Number);
-                deleteP(arg);
+                deleteP(firstTimeMMU, arg);
             }
             
         }else if(line.startsWith("kill")){
             const args = line.match(/\(([^)]+)\)/);
             if (args) {
                 const [arg] = args[1].split(',').map(Number);
-                kill(arg);
+                kill(firstTimeMMU, arg);
             }
         }
         
     });
+    optMMU = new MMU(5, semilla);
+    optMMU.symbolTable.push([1, []]);
+    optMMU.pagesForOPT = firstTimeMMU.pagesForOPT;
+
+
+}
+
+function processNextLine() {
+    const fileContent = JSON.parse(localStorage.getItem("fileContent"));
+    
+    if (!fileContent) {
+        console.error("No file content found.");
+        return;
+    }
+
+    const lines = fileContent.split('\n'); 
+    if (!pausado && currentIndex < lines.length) { // Solo ejecuta si no está en pausa y hay líneas por procesar
+        const line = lines[currentIndex];
+        console.log(line);
+        
+        if (line.startsWith("new")) {
+            const args = line.match(/\(([^)]+)\)/);
+            if (args) {
+                const [arg1, arg2] = args[1].split(',').map(Number);
+                newP(selectedMMU, arg1, arg2);
+                newP(optMMU, arg1, arg2);
+            }
+        } else if (line.startsWith("use")) {
+            const args = line.match(/\(([^)]+)\)/);
+            if (args) {
+                const [arg] = args[1].split(',').map(Number);
+                use(selectedMMU, arg);
+                use(optMMU, arg);
+            }
+        } else if (line.startsWith("delete")) {
+            const args = line.match(/\(([^)]+)\)/);
+            if (args) {
+                const [arg] = args[1].split(',').map(Number);
+                deleteP(selectedMMU, arg);
+                deleteP(optMMU, arg);
+            }
+        } else if (line.startsWith("kill")) {
+            const args = line.match(/\(([^)]+)\)/);
+            if (args) {
+                const [arg] = args[1].split(',').map(Number);
+                kill(selectedMMU, arg);
+                kill(optMMU, arg);
+            }
+        }
+
+        console.log("SELECTED");
+        console.log(JSON.parse(JSON.stringify(selectedMMU)));
+        console.log("OPTIMO");
+        console.log(JSON.parse(JSON.stringify(optMMU)));
+
+        currentIndex++; // Incrementar el índice después de procesar la línea
+    }
+
+    // Si aún hay líneas por procesar, volver a ejecutar processNextLine después de 5 segundos
+    if (currentIndex < lines.length) {
+        setTimeout(processNextLine, 5000); // Espera 5 segundos para procesar la siguiente línea
+    } else {
+        console.log("Todas las líneas han sido procesadas."); // Mensaje opcional cuando se completan todas las líneas
+    }
 }
 
 function pausar(){
 
     if(document.getElementById("pausa").textContent === "Pausar"){
         document.getElementById("pausa").textContent = "Continuar"
-        pausado = false;
+        pausado = true;
+        console.log(pausado);
     }else{
         document.getElementById("pausa").textContent = "Pausar"
-        pausado = true;
+        pausado = false;
+        processNextLine()
+        console.log(pausado);
     }
 }
 

@@ -2,35 +2,36 @@ function call(){
     console.log("se ha llamado a una funcion de codigo.js dentro de generales.js")
 }
 
-function newP(pid, size){
+function newP(mmu, pid, size){
     console.log("llamada a new")
     console.log("pid = " +pid)
     console.log("size = " + size)
     
-    selectedMMU.new(pid,size);
-    console.log(selectedMMU);
+    mmu.new(pid,size);
+    
+    // console.log(JSON.parse(JSON.stringify(mmu)));
 }
 
-function use(ptr){
+function use(mmu, ptr){
     console.log("llamada a use")
     console.log("ptr = " + ptr)
 
-    selectedMMU.use(ptr);
-    console.log(selectedMMU);
+    mmu.use(ptr);
+    // console.log(JSON.parse(JSON.stringify(mmu)));
 }
 
-function deleteP(ptr){
+function deleteP(mmu, ptr){
     console.log("llamada a delete")
     console.log("ptr = "+ ptr)
 
-    selectedMMU.delete(+ptr);
-    console.log(selectedMMU);
+    mmu.delete(+ptr);
+    // console.log(JSON.parse(JSON.stringify(mmu)));
 }
 
-function kill(pid){
+function kill(mmu, pid){
     console.log("llamada a kill")
     console.log("pid = " + pid )
    
-    selectedMMU.kill(+pid);
-    console.log(selectedMMU);
+    mmu.kill(+pid);
+    // console.log(JSON.parse(JSON.stringify(mmu)));
 }

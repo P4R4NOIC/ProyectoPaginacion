@@ -320,6 +320,7 @@ class MMU {
             }
             this.runMRUClock(ptrIdentifier);
             this.ram += pageSize;
+            this.fragmentation += 4096-pageSize;
             //this.simulationInformation(newPagina, ptr);
             return this.paginas;
         }else{
@@ -332,6 +333,7 @@ class MMU {
                         this.runMRUClock(ptrIdentifier);
                         this.hit();
                         this.ram += pageSize;
+                        this.fragmentation += 4096-pageSize;
                         if(this.algorithm!=5){
                             this.pagesForOPT.push(pageIdentifier);
                         }
@@ -404,6 +406,7 @@ class MMU {
             });
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
+            this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
             let segmentpos = this.tablaPaginasFisicas.length;
             this.tablaPaginasFisicas.push(pagetoPlace);
             this.runMRUClock(ptrOfPage);
@@ -459,6 +462,7 @@ class MMU {
             }
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
+            this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
             this.runMRUClock(ptrOfPage);
             return segmentpos;
         }
@@ -499,6 +503,7 @@ class MMU {
             }
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
+            this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
             this.runMRUClock(ptrOfPage);
             return segmentpos;
         }
@@ -545,6 +550,7 @@ class MMU {
             }
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
+            this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
             this.runMRUClock(ptrOfPage);
             return segmentpos;
         }
@@ -610,32 +616,28 @@ class MMU {
 
 // Ejemplo de uso:
 let newMMU = new MMU(1, 6234);
-newMMU.new(1,5096);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);
-console.log(newMMU.ram);
-console.log(newMMU.vram);
-newMMU.new(2,5000);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);
-console.log(newMMU.ram);
-console.log(newMMU.vram);
 newMMU.new(1,2500);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
-console.log(newMMU.ram);
-console.log(newMMU.clock);
-newMMU.use(0);
+console.log(newMMU.fragmentation);
+newMMU.new(1,5000);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
-console.log(newMMU.ram);
-console.log(newMMU.clock);
-newMMU.new(1,8006);
+console.log(newMMU.fragmentation);
+newMMU.new(1,5000);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
-console.log(newMMU.ram);
-console.log(newMMU.vram);
-
+console.log(newMMU.fragmentation);
+newMMU.new(1,2500);
+console.log(newMMU.tablaPaginasFisicas);
+console.log(newMMU.memoryMap);
+console.log(newMMU.fragmentation);
+console.log(newMMU.clock);
+newMMU.use(1);
+console.log(newMMU.tablaPaginasFisicas);
+console.log(newMMU.memoryMap);
+console.log(newMMU.fragmentation);
+console.log(newMMU.clock);
 /*newMMU.new(1,250);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
@@ -660,20 +662,24 @@ console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 console.log(newMMU.thrashing);*/
 
-let newMMU2 = new MMU(5);
+let newMMU2 = new MMU(5, 2526);
 newMMU2.symbolTable.push([1, []]);
 newMMU2.pagesForOPT = newMMU.pagesForOPT;
 console.log(newMMU2.pagesForOPT)
-newMMU2.new(1,250);
+newMMU2.new(1,2500);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
-newMMU2.new(1,500);
+newMMU2.new(1,5000);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
-newMMU2.new(1,250);
+newMMU2.new(1,5000);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
-newMMU2.new(1,500);
+newMMU2.new(1,2500);
+console.log(newMMU2.tablaPaginasFisicas);
+console.log(newMMU2.memoryMap);
+console.log(newMMU2.clock);
+newMMU2.use(1);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
 console.log(newMMU2.clock);

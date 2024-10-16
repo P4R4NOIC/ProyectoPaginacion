@@ -155,9 +155,9 @@ class MMU {
                 if (element[0]== ptr){
                     if(this.algorithm==5){
                         for (let i = 0; i < element[1].length; i++) {
-                            console.log(this.pagesForOPT);
+                            //console.log(this.pagesForOPT);
                             this.pagesForOPT.shift();
-                            console.log(this.pagesForOPT);
+                            //console.log(this.pagesForOPT);
                         }
                     }
                     element[1].forEach(page =>{
@@ -246,7 +246,7 @@ class MMU {
         });
         this.runClock(null);
         this.clock++;
-        console.log(mensaje);
+        //console.log(mensaje);
     }
 
     // elimina el proceso de la tabla de simbolos con sus respectivos ptr que a su ves deberan borrarse del memoMap con sus respectivas paginas
@@ -350,6 +350,30 @@ class MMU {
         }
 
     }
+
+
+    processMRList(){
+        //info del id del proceso que le pertenece a la pagina en memoria real
+        let mmuPPid = [];
+        this.tablaPaginasFisicas.forEach(pageId=>{
+            this.symbolTable.forEach(proceso => {
+                proceso[1].forEach(puntero =>{
+                    //console.log(puntero.id)
+                    this.memoryMap.forEach(element=>{
+                        if (element[0] == puntero.pid){
+                            element[1].forEach(pagina =>{
+                                if (pagina.idPage == pageId){
+                                    mmuPPid.push(proceso[0]);
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+        });
+        return mmuPPid;
+    }
+
 
     replaceAlgorithm(pagetoPlace, ptrOfPage, pageSize = 0){
         if(this.algorithm!=5){
@@ -607,7 +631,7 @@ class MMU {
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
             this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
             this.runClock(pagetoPlace);
-            console.log(`Página colocada: ${pageToPlace}, Página reemplazada: ${replacedPage}`);
+            //(`Página colocada: ${pageToPlace}, Página reemplazada: ${replacedPage}`);
             return pageToReplace;  // Retornar la posición del segmento afectado
         }
     }

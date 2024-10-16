@@ -12,6 +12,7 @@ var selectedMMU;
 var optMMU;
 var currentIndex = 0;
 var contadorNews = 0;
+var colors;
 function simular() {
 
     if(localStorage.getItem("sim") ==  1){
@@ -223,6 +224,7 @@ function parseFile() {
     const lines = fileContent.split('\n'); 
 
     contadorNews = lines.filter(command => command.startsWith("new")).length;
+    colors = generateColors(contadorNews);
     //CREACION MMU
     let nombreAlgoritmo = localStorage.getItem("algoritmo");
     let semilla = +localStorage.getItem("semilla");
@@ -286,6 +288,7 @@ function parseFile() {
 
 function processNextLine() {
     
+    
     const fileContent = JSON.parse(localStorage.getItem("fileContent"));
     
     if (!fileContent) {
@@ -336,8 +339,8 @@ function processNextLine() {
         //console.log(optMMU.mmuInformation().length)
 
         var bodyElement = document.getElementById("body1");
-
-
+       
+      
 
         while (bodyElement.children.length > 1) {
             bodyElement.removeChild(bodyElement.lastChild);
@@ -350,8 +353,8 @@ function processNextLine() {
 
             for (var j = 0; j < 8; j++) {
                 var td = document.createElement("td");
-                td.classList.add("verde"); 
-
+               
+                td.id = "tdOPT" + i
      
                 td.textContent = optMMU.mmuInformation()[i][j];
 
@@ -374,7 +377,7 @@ function processNextLine() {
 
         for (var i = 0; i < selectedMMU.mmuInformation().length; i++) {
             var tr = document.createElement("tr");
-            tr.id = "trOPT" + i; 
+            tr.id = "trALG" + i; 
 
             for (var j = 0; j < 8; j++) {
                 var td = document.createElement("td");
@@ -417,7 +420,79 @@ function processNextLine() {
         document.getElementById("trashPALG").textContent = parseFloat(((selectedMMU.thrashing/selectedMMU.clock)*100).toFixed(1)) + "%"
         document.getElementById("fragALG").textContent = selectedMMU.fragmentation/100 + "KB"
        
+        for(var i = 0; i < 100; i++){
+            if(optMMU.tablaPaginasFisicas.length < 100){
+                if(i > optMMU.tablaPaginasFisicas.length){
+                    document.getElementById("td" + i).style.backgroundColor = "#000000"
+                   
+                }else if(optMMU.tablaPaginasFisicas[i] === -1){
+                    document.getElementById("td" + i).style.backgroundColor = "#000000"
+                    
+                }else{
+                    document.getElementById("td" + i).style.backgroundColor = colors[optMMU.processMRList()[i]]
+                   
 
+                }
+
+            }else{
+                if(optMMU.tablaPaginasFisicas[i] === -1){
+                    document.getElementById("td" + i).style.backgroundColor = "#000000"
+                    
+                }else{
+                    document.getElementById("td" + i).style.backgroundColor = colors[optMMU.processMRList()[i]]
+                }
+            }
+        }
+
+        document.getElementById("trOPT0").style.backgroundColor = "#0000FF"
+        for (var i = 0; i < 100; i++) {
+            var tr = document.getElementById("trOPT" + i); // Get the corresponding row
+            console.log("tr")
+            if (optMMU.tablaPaginasFisicas.length < 100) {
+                if (i >= optMMU.tablaPaginasFisicas.length) {
+                    tr.style.backgroundColor = "#000000"; // Change row color to black
+                } else if (optMMU.tablaPaginasFisicas[i] === -1) {
+                    tr.style.backgroundColor = "#000000"; // Change row color to black
+                } else {
+                    tr.style.backgroundColor = colors[optMMU.processMRList()[i]]; // Set to color based on processMRList
+                }
+            } else {
+                if (optMMU.tablaPaginasFisicas[i] === -1) {
+                    tr.style.backgroundColor = "#000000"; // Change row color to black
+                } else {
+                    tr.style.backgroundColor = colors[optMMU.processMRList()[i]]; // Set to color based on processMRList
+                }
+            }
+        }
+
+        for(var f = 0; f < 100; f++){
+            if(selectedMMU.tablaPaginasFisicas.length < 100){
+                if(f > selectedMMU.tablaPaginasFisicas.length){
+                    document.getElementById("tm" + f).style.backgroundColor = "#000000"
+
+                }else if(selectedMMU.tablaPaginasFisicas[f] === -1){
+                    document.getElementById("tm" + f).style.backgroundColor = "#000000"
+                    
+                }else{
+                    document.getElementById("tm" + f).style.backgroundColor = colors[selectedMMU.processMRList()[f]]
+                }
+
+            }else{
+                if(selectedMMU.tablaPaginasFisicas[f] === -1){
+                    document.getElementById("tm" + f).style.backgroundColor = "#000000"
+                    
+                }else{
+                    document.getElementById("tm" + f).style.backgroundColor = colors[selectedMMU.processMRList()[f]]
+                }
+            }
+        }
+        
+
+       // console.log(selectedMMU.processMRList())
+       // console.log("colores opt")
+        //console.log(optMMU.processMRList())
+        //console.log(selectedMMU)
+       
 
 
         currentIndex++; // Incrementar el índice después de procesar la línea
@@ -482,9 +557,9 @@ function cargarSim(){
 function generateCells(){
     parseFile();
     console.log("selected mmu")
-    console.log(selectedMMU)
+   // console.log(selectedMMU)
     console.log("opt mmu")
-    console.log(optMMU)
+    //console.log(optMMU)
     var texto = localStorage.getItem("algoritmo")
     document.getElementById("mmu").textContent = "MMU - " + texto
     document.getElementById("ram").textContent = "RAM - " + texto
@@ -515,13 +590,13 @@ function generateCells(){
     document.getElementById("trashPALG").textContent = 0 +  "%"
     document.getElementById("fragALG").textContent = selectedMMU.fragmentation
 
-
+   
    
     for(var i = 0; i<100; i++){
         var td = document.createElement("td");
-        td.id = "tdOPT"
+        td.id = "td"+i
         
-            td.classList = "verde"
+        
      
 
         document.getElementById("prim1").appendChild(td);
@@ -541,7 +616,7 @@ function generateCells(){
         var td = document.createElement("td");
         
         
-            td.classList = "verde"
+            td.id = "tm" + i
      
 
         document.getElementById("prim2").appendChild(td);
@@ -558,6 +633,18 @@ function generateCells(){
 
 }
 
+
+function generateColors(numColors) {
+    const colors = [];
+    
+    for (let i = 0; i < numColors; i++) {
+        // Generate a random hex color
+        const color = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+        colors.push(color);
+    }
+    
+    return colors;
+}
 
 function downloadFile(){
     if(!simulado){

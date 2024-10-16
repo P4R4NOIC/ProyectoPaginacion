@@ -394,7 +394,7 @@ function processNextLine() {
         document.getElementById("procOPT").textContent = optMMU.symbolTable.length
         document.getElementById("simTOPT").textContent = optMMU.clock + "s"
         document.getElementById("RAMOPT").textContent = optMMU.ram / 100
-        document.getElementById("RAMPOPT").textContent = parseFloat(((optMMU.ram/409600)*100).toFixed(1)) + "%"
+        document.getElementById("RAMPOPT").textContent = parseFloat(((optMMU.ram/40960)*100).toFixed(1)) + "%"
         document.getElementById("VRAMOPT").textContent = optMMU.vram / 100
         document.getElementById("VRAMPOPT").textContent = parseFloat(((optMMU.vram/optMMU.ram)*100).toFixed(1))+ "%"
         document.getElementById("loadOPT").textContent = optMMU.tablaPaginasFisicas.length
@@ -407,7 +407,7 @@ function processNextLine() {
         document.getElementById("procALG").textContent = selectedMMU.symbolTable.length
         document.getElementById("simTALG").textContent = selectedMMU.clock + "s"
         document.getElementById("RAMALG").textContent = selectedMMU.ram / 100
-        document.getElementById("RAMPALG").textContent = parseFloat(((selectedMMU.ram/409600)*100).toFixed(1)) + "%"
+        document.getElementById("RAMPALG").textContent = parseFloat(((selectedMMU.ram/40960)*100).toFixed(1)) + "%"
         document.getElementById("VRAMALG").textContent = selectedMMU.vram / 100
         document.getElementById("VRAMPALG").textContent = parseFloat(((selectedMMU.vram/selectedMMU.ram)*100).toFixed(1))+ "%"
         document.getElementById("loadALG").textContent = selectedMMU.tablaPaginasFisicas.length

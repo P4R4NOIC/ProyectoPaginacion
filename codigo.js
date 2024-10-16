@@ -28,10 +28,10 @@ function generarOperaciones(p, n, seed) {
     }
 
     function generarNew(pid) {
-        if (procesosTerminados.has(pid)) return; // No se puede hacer 'new' si el proceso está terminado
+        if (procesosTerminados.has(pid)) return; 
 
-        const size = Math.floor(random() * 1000) + 1; // Generar tamaño aleatorio
-        const ptr = punteroGlobal++; // Asignar un nuevo puntero único
+        const size = Math.floor(random() * 1000) + 1; 
+        const ptr = punteroGlobal++; 
 
         symbolTable[pid].push(ptr); // Agregar puntero a la tabla del proceso
         procesosActivos.add(pid); // Marca como proceso activo
@@ -40,7 +40,7 @@ function generarOperaciones(p, n, seed) {
     }
 
     function generarUse(ptr) {
-        if (punterosEliminados.has(ptr)) return; // No se puede usar un puntero eliminado
+        if (punterosEliminados.has(ptr)) return; 
         agregarOperacion(`use(${ptr})`);
     }
 
@@ -54,7 +54,7 @@ function generarOperaciones(p, n, seed) {
     }
 
     function generarKill(pid) {
-        if (procesosTerminados.has(pid)) return; // No se puede matar un proceso ya terminado
+        if (procesosTerminados.has(pid)) return; 
 
         agregarOperacion(`kill(${pid})`);
         procesosTerminados.add(pid); // Marca el proceso como terminado
@@ -81,7 +81,7 @@ function generarOperaciones(p, n, seed) {
                 generarUse(ptr);
             }
         } else if (op < 0.95) { // 15% probabilidad de 'delete'
-            // Reducción de delete: solo se ejecuta si hay punteros
+            // Solo se ejecuta si hay punteros
             if (symbolTable[pid].length > 0) {
                 generarDelete(pid);
             }
@@ -95,8 +95,7 @@ function generarOperaciones(p, n, seed) {
         generarKill(pid);
     }
 
-    console.log("Operaciones generadas:", operaciones.join(':'));
-    alert("HECHO");
+    alert("Operaciones generadas con éxito.");
     return operaciones.join(':');
 }
 

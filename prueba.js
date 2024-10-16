@@ -585,6 +585,8 @@ class MMU {
             let replacedPage = this.tablaPaginasFisicas[pageToReplace];
             this.tablaPaginasFisicas[pageToReplace] = pageToPlace;
 
+            let pageRSize;
+            let pagePSize;
             // Actualizar el memoryMap para reflejar el reemplazo
             this.memoryMap.forEach(segment => {
                 segment[1].forEach(page => {
@@ -592,14 +594,19 @@ class MMU {
                         // Marcar la página reemplazada como inactiva
                         page.flag = 1;
                         page.pointerPage = (page.idPage * -1) - 1;
+                        pageRSize = page.pagePTRSize;
                     }
                     if (page.idPage == pageToPlace) {
                         // Marcar la nueva página como activa
                         page.flag = 0;
+                        pagePSize = page.pagePTRSize;
                     }
                 });
             });
-
+            this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
+            this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
+            this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
+            this.runClock(pagetoPlace);
             console.log(`Página colocada: ${pageToPlace}, Página reemplazada: ${replacedPage}`);
             return pageToReplace;  // Retornar la posición del segmento afectado
         }

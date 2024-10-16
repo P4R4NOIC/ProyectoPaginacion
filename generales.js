@@ -11,6 +11,7 @@ var firstTimeMMU;
 var selectedMMU;
 var optMMU;
 var currentIndex = 0;
+var contadorNews = 0;
 function simular() {
 
     if(localStorage.getItem("sim") ==  1){
@@ -221,7 +222,7 @@ function parseFile() {
 
     const lines = fileContent.split('\n'); 
 
-   
+    contadorNews = lines.filter(command => command.startsWith("new")).length;
     //CREACION MMU
     let nombreAlgoritmo = localStorage.getItem("algoritmo");
     let semilla = +localStorage.getItem("semilla");

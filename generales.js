@@ -338,62 +338,52 @@ function processNextLine() {
         //console.log(optMMU.mmuInformation())
         //console.log(optMMU.mmuInformation().length)
 
-        var bodyElement = document.getElementById("body1");
-       
+        var body1 = document.getElementById("body1");
+        var body2 = document.getElementById("body2");
       
 
-        while (bodyElement.children.length > 1) {
-            bodyElement.removeChild(bodyElement.lastChild);
+        while (body1.children.length > 1) {
+            body1.removeChild(body1.lastChild);
         }
 
+        while (body2.children.length > 1) {
+            body2.removeChild(body2.lastChild);
+        }
 
         for (var i = 0; i < optMMU.mmuInformation().length; i++) {
             var tr = document.createElement("tr");
             tr.id = "trOPT" + i; 
 
+            var tr2 = document.createElement("tr");
+            tr2.id = "trALG" + i; 
+
             for (var j = 0; j < 8; j++) {
                 var td = document.createElement("td");
-               
-                td.id = "tdOPT" + i
+                td.style.backgroundColor = colors[optMMU.mmuInformation()[i][1]]
      
                 td.textContent = optMMU.mmuInformation()[i][j];
 
     
                 tr.appendChild(td);
-            }
-
-    
-            bodyElement.appendChild(tr);
-        }
-
-        var bodyElement = document.getElementById("body2");
 
 
-
-        while (bodyElement.children.length > 1) {
-            bodyElement.removeChild(bodyElement.lastChild);
-        }
-
-
-        for (var i = 0; i < selectedMMU.mmuInformation().length; i++) {
-            var tr = document.createElement("tr");
-            tr.id = "trALG" + i; 
-
-            for (var j = 0; j < 8; j++) {
-                var td = document.createElement("td");
-                td.classList.add("verde"); 
-
+                var td2 = document.createElement("td"); 
+                td2.style.backgroundColor = colors[selectedMMU.mmuInformation()[i][1]]
      
-                td.textContent = selectedMMU.mmuInformation()[i][j];
-
+                td2.textContent = selectedMMU.mmuInformation()[i][j];
+                
     
-                tr.appendChild(td);
+                tr2.appendChild(td2);
             }
 
     
-            bodyElement.appendChild(tr);
+            body1.appendChild(tr);
+            body2.appendChild(tr2);
         }
 
+        
+
+        var thrashingOPT = parseFloat(((optMMU.thrashing/optMMU.clock)*100).toFixed(1))
          //Carga de info OPT
         document.getElementById("procOPT").textContent = optMMU.symbolTable.length
         document.getElementById("simTOPT").textContent = optMMU.clock + "s"
@@ -404,9 +394,18 @@ function processNextLine() {
         document.getElementById("loadOPT").textContent = optMMU.tablaPaginasFisicas.length
         document.getElementById("unloadOPT").textContent = 100 - optMMU.tablaPaginasFisicas.length
         document.getElementById("trashOPT").textContent = optMMU.thrashing + "s"
-        document.getElementById("trashPOPT").textContent = parseFloat(((optMMU.thrashing/optMMU.clock)*100).toFixed(1)) + "%"
+        document.getElementById("trashPOPT").textContent = thrashingOPT + "%"
         document.getElementById("fragOPT").textContent = optMMU.fragmentation/100 + "KB"
         
+        if(thrashingOPT>50){
+            document.getElementById("trashPOPT").classList = "rojo"
+            document.getElementById("trashOPT").classList = "rojo"
+        }else{
+            document.getElementById("trashPOPT").classList = ""
+            document.getElementById("trashOPT").classList = ""
+        }
+
+        var thrashingALG = parseFloat(((selectedMMU.thrashing/selectedMMU.clock)*100).toFixed(1))
         //Carga info ALG
         document.getElementById("procALG").textContent = selectedMMU.symbolTable.length
         document.getElementById("simTALG").textContent = selectedMMU.clock + "s"
@@ -417,8 +416,16 @@ function processNextLine() {
         document.getElementById("loadALG").textContent = selectedMMU.tablaPaginasFisicas.length
         document.getElementById("unloadALG").textContent = 100 - selectedMMU.tablaPaginasFisicas.length
         document.getElementById("trashALG").textContent = selectedMMU.thrashing + "s"
-        document.getElementById("trashPALG").textContent = parseFloat(((selectedMMU.thrashing/selectedMMU.clock)*100).toFixed(1)) + "%"
+        document.getElementById("trashPALG").textContent = thrashingALG + "%"
         document.getElementById("fragALG").textContent = selectedMMU.fragmentation/100 + "KB"
+
+        if(thrashingALG>50){
+            document.getElementById("trashALG").classList = "rojo"
+            document.getElementById("trashPALG").classList = "rojo"
+        }else{
+            document.getElementById("trashALG").classList = ""
+            document.getElementById("trashPALG").classList = ""
+        }
        
         for(var i = 0; i < 100; i++){
             if(optMMU.tablaPaginasFisicas.length < 100){
@@ -442,50 +449,30 @@ function processNextLine() {
                     document.getElementById("td" + i).style.backgroundColor = colors[optMMU.processMRList()[i]]
                 }
             }
-        }
 
-        document.getElementById("trOPT0").style.backgroundColor = "#0000FF"
-        for (var i = 0; i < 100; i++) {
-            var tr = document.getElementById("trOPT" + i); // Get the corresponding row
-            console.log("tr")
-            if (optMMU.tablaPaginasFisicas.length < 100) {
-                if (i >= optMMU.tablaPaginasFisicas.length) {
-                    tr.style.backgroundColor = "#000000"; // Change row color to black
-                } else if (optMMU.tablaPaginasFisicas[i] === -1) {
-                    tr.style.backgroundColor = "#000000"; // Change row color to black
-                } else {
-                    tr.style.backgroundColor = colors[optMMU.processMRList()[i]]; // Set to color based on processMRList
-                }
-            } else {
-                if (optMMU.tablaPaginasFisicas[i] === -1) {
-                    tr.style.backgroundColor = "#000000"; // Change row color to black
-                } else {
-                    tr.style.backgroundColor = colors[optMMU.processMRList()[i]]; // Set to color based on processMRList
-                }
-            }
-        }
-
-        for(var f = 0; f < 100; f++){
             if(selectedMMU.tablaPaginasFisicas.length < 100){
-                if(f > selectedMMU.tablaPaginasFisicas.length){
-                    document.getElementById("tm" + f).style.backgroundColor = "#000000"
+                if(i > selectedMMU.tablaPaginasFisicas.length){
+                    document.getElementById("tm" + i).style.backgroundColor = "#000000"
 
-                }else if(selectedMMU.tablaPaginasFisicas[f] === -1){
-                    document.getElementById("tm" + f).style.backgroundColor = "#000000"
+                }else if(selectedMMU.tablaPaginasFisicas[i] === -1){
+                    document.getElementById("tm" + i).style.backgroundColor = "#000000"
                     
                 }else{
-                    document.getElementById("tm" + f).style.backgroundColor = colors[selectedMMU.processMRList()[f]]
+                    document.getElementById("tm" + i).style.backgroundColor = colors[selectedMMU.processMRList()[i]]
                 }
 
             }else{
-                if(selectedMMU.tablaPaginasFisicas[f] === -1){
-                    document.getElementById("tm" + f).style.backgroundColor = "#000000"
+                if(selectedMMU.tablaPaginasFisicas[i] === -1){
+                    document.getElementById("tm" + i).style.backgroundColor = "#000000"
                     
                 }else{
-                    document.getElementById("tm" + f).style.backgroundColor = colors[selectedMMU.processMRList()[f]]
+                    document.getElementById("tm" + i).style.backgroundColor = colors[selectedMMU.processMRList()[i]]
                 }
             }
         }
+
+      
+
         
 
        // console.log(selectedMMU.processMRList())
@@ -500,7 +487,7 @@ function processNextLine() {
 
     // Si aún hay líneas por procesar, volver a ejecutar processNextLine después de 5 segundos
     if (currentIndex < lines.length) {
-        setTimeout(processNextLine, 100); // Espera 5 segundos para procesar la siguiente línea
+        setTimeout(processNextLine, 0); // Espera 5 segundos para procesar la siguiente línea
     } else {
         console.log("Todas las líneas han sido procesadas."); // Mensaje opcional cuando se completan todas las líneas
     }
@@ -511,12 +498,12 @@ function pausar(){
     if(document.getElementById("pausa").textContent === "Pausar"){
         document.getElementById("pausa").textContent = "Continuar"
         pausado = true;
-        console.log(pausado);
+        //console.log(pausado);
     }else{
         document.getElementById("pausa").textContent = "Pausar"
         pausado = false;
         processNextLine()
-        console.log(pausado);
+        //console.log(pausado);
     }
 }
 
@@ -556,9 +543,9 @@ function cargarSim(){
 
 function generateCells(){
     parseFile();
-    console.log("selected mmu")
+    //console.log("selected mmu")
    // console.log(selectedMMU)
-    console.log("opt mmu")
+    //console.log("opt mmu")
     //console.log(optMMU)
     var texto = localStorage.getItem("algoritmo")
     document.getElementById("mmu").textContent = "MMU - " + texto

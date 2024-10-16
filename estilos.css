@@ -385,7 +385,7 @@ h1{
 
 
 td.verde {
-  background-color: rgb(105, 219, 111); 
+  background-color: #ffffff; 
  
 }
 
@@ -395,9 +395,6 @@ td.amarillo{
 
 td.rosa{
   background-color: rgb(243, 133, 133); 
-}
-th.rojo{
-  background-color: rgb(214, 46, 46); 
 }
 
 td.rojo{
@@ -413,10 +410,9 @@ td.naranja{
   background-color: rgb(214, 90, 33); 
 }
 
-td.blanco{
-  background-color: rgb(255, 255, 255); 
-  color: black;
-  border-color: gray;
+td.negro{
+  background-color: rgb(0, 0, 0); 
+  
 }
 
 .tabelPages{

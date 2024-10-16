@@ -1,4 +1,12 @@
-function generarOperaciones(p, n) {
+function seedRandom(seed) {
+    return function() {
+        // Utiliza un generador de números pseudoaleatorios (PRNG) simple
+        seed = (seed * 48271) % 2147483647; // Generador de números aleatorios basado en la semilla
+        return (seed - 1) / 2147483646; // Normaliza a rango [0, 1)
+    }
+}
+
+function generarOperaciones(p, n, seed) {
     const operaciones = [];
     const symbolTable = {}; // Almacena punteros activos por proceso (pid)
     const procesosActivos = new Set(); // PIDs con al menos un 'new'
@@ -7,6 +15,7 @@ function generarOperaciones(p, n) {
     let punteroGlobal = 0; // Contador global de punteros
 
     let totalOperaciones = 0;
+    const random = seedRandom(seed); // Inicializa el generador con la semilla
 
     // Inicializamos estructuras para cada proceso
     for (let i = 1; i <= p; i++) {
@@ -21,7 +30,7 @@ function generarOperaciones(p, n) {
     function generarNew(pid) {
         if (procesosTerminados.has(pid)) return; // No se puede hacer 'new' si el proceso está terminado
 
-        const size = Math.floor(Math.random() * 1000) + 1; // Generar tamaño aleatorio
+        const size = Math.floor(random() * 1000) + 1; // Generar tamaño aleatorio
         const ptr = punteroGlobal++; // Asignar un nuevo puntero único
 
         symbolTable[pid].push(ptr); // Agregar puntero a la tabla del proceso
@@ -60,15 +69,15 @@ function generarOperaciones(p, n) {
 
     // Generar operaciones mientras haya procesos activos y no superemos el límite
     while (totalOperaciones < n && procesosActivos.size > 0) {
-        const pid = Array.from(procesosActivos)[Math.floor(Math.random() * procesosActivos.size)];
-        const op = Math.random();
+        const pid = Array.from(procesosActivos)[Math.floor(random() * procesosActivos.size)];
+        const op = random();
 
         if (op < 0.4) { // 40% probabilidad de 'new'
             generarNew(pid);
         } else if (op < 0.8) { // 40% probabilidad de 'use'
             const punteros = symbolTable[pid].filter(ptr => !punterosEliminados.has(ptr));
             if (punteros.length > 0) {
-                const ptr = punteros[Math.floor(Math.random() * punteros.length)];
+                const ptr = punteros[Math.floor(random() * punteros.length)];
                 generarUse(ptr);
             }
         } else if (op < 0.95) { // 15% probabilidad de 'delete'
@@ -76,7 +85,7 @@ function generarOperaciones(p, n) {
             if (symbolTable[pid].length > 0) {
                 generarDelete(pid);
             }
-        } else if (Math.random() < 0.01 && symbolTable[pid].length > 0) { // 0.5% probabilidad de 'kill'
+        } else if (random() < 0.005 && symbolTable[pid].length > 0) { // 0.5% probabilidad de 'kill'
             generarKill(pid);
         }
     }

@@ -174,7 +174,7 @@ function llamarFunc(){
         alert("Por favor escoja una semilla mayor a cero");
     } else {
         simulado = true;
-        let resultado = generarOperaciones(procesos, operaciones);
+        let resultado = generarOperaciones(procesos, operaciones, semilla);
         archivo = "data.txt"
         //data = "new(1, 250):new(1, 345):use(1):use(1):delete(0):kill(1)".split(':');
         data = resultado.split(':');

@@ -1,5 +1,94 @@
-function call(){
-    console.log("se ha llamado a una funcion de codigo.js dentro de generales.js")
+function generarOperaciones(p, n) {
+    const operaciones = [];
+    const symbolTable = {}; // Almacena punteros activos por proceso (pid)
+    const procesosActivos = new Set(); // PIDs con al menos un 'new'
+    const procesosTerminados = new Set(); // PIDs que recibieron 'kill'
+    const punterosEliminados = new Set(); // Punteros que ya fueron eliminados
+    let punteroGlobal = 0; // Contador global de punteros
+
+    let totalOperaciones = 0;
+
+    // Inicializamos estructuras para cada proceso
+    for (let i = 1; i <= p; i++) {
+        symbolTable[i] = [];
+    }
+
+    function agregarOperacion(op) {
+        operaciones.push(op);
+        totalOperaciones++;
+    }
+
+    function generarNew(pid) {
+        if (procesosTerminados.has(pid)) return; // No se puede hacer 'new' si el proceso está terminado
+
+        const size = Math.floor(Math.random() * 1000) + 1; // Generar tamaño aleatorio
+        const ptr = punteroGlobal++; // Asignar un nuevo puntero único
+
+        symbolTable[pid].push(ptr); // Agregar puntero a la tabla del proceso
+        procesosActivos.add(pid); // Marca como proceso activo
+
+        agregarOperacion(`new(${pid}, ${size})`);
+    }
+
+    function generarUse(ptr) {
+        if (punterosEliminados.has(ptr)) return; // No se puede usar un puntero eliminado
+        agregarOperacion(`use(${ptr})`);
+    }
+
+    function generarDelete(pid) {
+        const punteros = symbolTable[pid].filter(ptr => !punterosEliminados.has(ptr));
+        if (punteros.length > 0) {
+            const ptr = punteros.shift(); // Elimina el primer puntero disponible
+            punterosEliminados.add(ptr); // Marca el puntero como eliminado
+            agregarOperacion(`delete(${ptr})`);
+        }
+    }
+
+    function generarKill(pid) {
+        if (procesosTerminados.has(pid)) return; // No se puede matar un proceso ya terminado
+
+        agregarOperacion(`kill(${pid})`);
+        procesosTerminados.add(pid); // Marca el proceso como terminado
+        procesosActivos.delete(pid); // Elimina de procesos activos
+        symbolTable[pid] = []; // Limpia todos los punteros del proceso
+    }
+
+    // Generar al menos un 'new' inicial para cada proceso
+    for (let i = 1; i <= p; i++) {
+        generarNew(i);
+    }
+
+    // Generar operaciones mientras haya procesos activos y no superemos el límite
+    while (totalOperaciones < n && procesosActivos.size > 0) {
+        const pid = Array.from(procesosActivos)[Math.floor(Math.random() * procesosActivos.size)];
+        const op = Math.random();
+
+        if (op < 0.4) { // 40% probabilidad de 'new'
+            generarNew(pid);
+        } else if (op < 0.8) { // 40% probabilidad de 'use'
+            const punteros = symbolTable[pid].filter(ptr => !punterosEliminados.has(ptr));
+            if (punteros.length > 0) {
+                const ptr = punteros[Math.floor(Math.random() * punteros.length)];
+                generarUse(ptr);
+            }
+        } else if (op < 0.95) { // 15% probabilidad de 'delete'
+            // Reducción de delete: solo se ejecuta si hay punteros
+            if (symbolTable[pid].length > 0) {
+                generarDelete(pid);
+            }
+        } else if (Math.random() < 0.01 && symbolTable[pid].length > 0) { // 0.5% probabilidad de 'kill'
+            generarKill(pid);
+        }
+    }
+
+    // Asegura que todos los procesos activos terminen con 'kill'
+    for (const pid of procesosActivos) {
+        generarKill(pid);
+    }
+
+    console.log("Operaciones generadas:", operaciones.join(':'));
+    alert("HECHO");
+    return operaciones.join(':');
 }
 
 function newP(mmu, pid, size){

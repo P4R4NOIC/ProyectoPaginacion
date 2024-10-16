@@ -162,20 +162,24 @@ function simular() {
 }
 
 function llamarFunc(){
-    if(parseInt(document.getElementById("inputProcesos").value)<=0 || document.getElementById("inputProcesos").value == ""){
-        alert("Por favor introduzca un numero superior a cero procesos para simular")
-    }
-    else if(parseInt(document.getElementById("inputOp").value)<=0  ||  document.getElementById("inputOp").value == ""){
-        alert("Por favor introduzca un numero superior a cero operaciones para simular")
-    }
-    else if(parseInt(document.getElementById("inputRandom").value) <= 0 || document.getElementById("inputRandom").value == ""){
-        alert("Por favor escoja una semilla mayor a cero")
-    }else{
+    const procesos = parseInt(document.getElementById("inputProcesos").value);
+    const operaciones = parseInt(document.getElementById("inputOp").value);
+    const semilla = parseInt(document.getElementById("inputRandom").value);
+
+    if (isNaN(procesos) || procesos <= 0) {
+        alert("Por favor introduzca un número superior a cero procesos para simular");
+    } else if (isNaN(operaciones) || operaciones <= 0) {
+        alert("Por favor introduzca un número superior a cero operaciones para simular");
+    } else if (isNaN(semilla) || semilla <= 0) {
+        alert("Por favor escoja una semilla mayor a cero");
+    } else {
         simulado = true;
-        call();
+        let resultado = generarOperaciones(procesos, operaciones);
         archivo = "data.txt"
-        data = "new(1, 250):new(1, 345):use(1):use(1):delete(0):kill(1)".split(':');
+        //data = "new(1, 250):new(1, 345):use(1):use(1):delete(0):kill(1)".split(':');
+        data = resultado.split(':');
         texto = data.join('\n')
+        console.log(texto);
         blob = new Blob([texto], { type: 'text/plain' });
 
     }

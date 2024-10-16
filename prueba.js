@@ -695,19 +695,27 @@ console.log(newMMU2.pagesForOPT)
 newMMU2.new(1,2500);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
+console.log(newMMU2.fragmentation);
+console.log(newMMU2.mmuInformation());
 newMMU2.new(1,5000);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
+console.log(newMMU2.fragmentation);
+console.log(newMMU2.mmuInformation());
 newMMU2.new(1,5000);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
 newMMU2.new(1,2500);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
+console.log(newMMU2.fragmentation);
+console.log(newMMU2.mmuInformation());
 console.log(newMMU2.clock);
 newMMU2.use(1);
 console.log(newMMU2.tablaPaginasFisicas);
 console.log(newMMU2.memoryMap);
+console.log(newMMU2.fragmentation);
+console.log(newMMU2.mmuInformation());
 console.log(newMMU2.clock);
 // newMMU.new(1,50);
 // newMMU.new(2,5320);
@@ -724,3 +732,25 @@ console.log(newMMU2.clock);
 //newMMU.kill(3);
 //console.log(newMMU);
 
+// let newMMU3 = new MMU(1);
+// newMMU3.symbolTable.push([1, []]);
+// newMMU3.new(1, 250);
+// console.log(newMMU3.tablaPaginasFisicas);
+// console.log(newMMU3.memoryMap);
+// newMMU3.new(1,345);
+// console.log(newMMU3.tablaPaginasFisicas);
+// console.log(newMMU3.memoryMap);
+// newMMU3.use(1)
+// console.log(newMMU3.tablaPaginasFisicas);
+// console.log(newMMU3.memoryMap);
+// newMMU3.use(1)
+// console.log(newMMU3.tablaPaginasFisicas);
+// console.log(newMMU3.memoryMap);
+// console.log(newMMU3);
+
+
+
+// newMMU3.delete(0)
+// console.log(newMMU3);
+// newMMU3.kill(1)
+// console.log(newMMU3);

@@ -126,14 +126,13 @@ class MMU {
         let newPagina;
         for (let i = 0; i< Math.ceil(size/4096); i++){
             if (pageSize >= 4096){
-                newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas, newPTR.pid, 4096, pid), 0, this.setMark(), 4096);
+                newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas, newPTR.pid, 4096, pid), 0, 0, 4096);
                 pageSize -= 4096;
             }else{
-                newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas, newPTR.pid, pageSize, pid), 0, this.setMark(), pageSize);
+                newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas, newPTR.pid, pageSize, pid), 0, 0, pageSize);
             }
             this.memoryMap[this.memoryMap.length-1][1].push(newPagina);
             this.paginas++;
-            this.simulationInformation(newPagina, pid);
         }
         return newPTR;
     }
@@ -162,7 +161,6 @@ class MMU {
                         }
                     }
                     element[1].forEach(page =>{
-                        this.simulationInformation(page, processId);
                         if (page.flag){
                             let replaceFlag = 1;
                             for (let i = 0; i < this.tablaPaginasFisicas.length; i++){
@@ -173,7 +171,11 @@ class MMU {
                                     replaceFlag = 0;
                                     this.realPages++;
                                     this.hit();
-                                    this.runMRUClock(ptr);
+                                    if (this.algorithm == 3){
+                                        this.runMRUClock(ptr);
+                                    }else{
+                                        this.runClock(page.idPage);
+                                    }
                                     if(this.algorithm!=5){
                                         this.pagesForOPT.push(page.idPage);
                                     }
@@ -189,10 +191,11 @@ class MMU {
                             if (this.algorithm == 2){
                                 page.mark = 1;
                             }
-                            if(this.algorithm!=5){
-                                this.pagesForOPT.push(page.idPage);
+                            if (this.algorithm == 3){
+                                this.runMRUClock(ptr);
+                            }else{
+                                this.runClock(null);
                             }
-                            this.runMRUClock(ptr);
                             this.hit();
                         }
                     });
@@ -241,7 +244,8 @@ class MMU {
                 }
             }
         });
-        this.runMRUClock(-1);
+        this.runClock(null);
+        this.clock++;
         console.log(mensaje);
     }
 
@@ -264,37 +268,32 @@ class MMU {
         });
 
         this.symbolTable = listaSimbolos.filter(element => element[0] !== pid);
-        this.runMRUClock(-1);
+        this.runClock(null);
+        this.clock++;
         // deletedPIDS.push(pid);
     }
-    setMark(){
-        //FIFO
-        if (this.algorithm == 1){
-            return 0;
-        }
-        //SC
-        if (this.algorithm == 2){
-            return 1;
-        }
-        //MRU
-        if (this.algorithm == 3){
-            return 0;
-        }
-        //RND
-        if (this.algorithm == 4){
-            return 0;
-        }
-        //OPT
-        if (this.algorithm == 5){
-            return 0;
-        }
-    }
+
     runMRUClock(ptr){
         this.tablaPaginasFisicas.forEach(pageS=>{
             for(let i =0; i < this.memoryMap.length; i++){
                 this.memoryMap[i][1].forEach(page =>{
                     if (pageS == page.idPage){
                         if (this.memoryMap[i][0] != ptr){
+                            page.timestamp++;
+                        }else{
+                            page.timestamp = 0;
+                        }
+                    }
+                });
+            }
+        });
+    }
+    runClock(pageId){
+        this.tablaPaginasFisicas.forEach(pageS=>{
+            for(let i =0; i < this.memoryMap.length; i++){
+                this.memoryMap[i][1].forEach(page =>{
+                    if (pageS == page.idPage){
+                        if (page.idPage != pageId){
                             page.timestamp++;
                         }else{
                             page.timestamp = 0;
@@ -318,7 +317,7 @@ class MMU {
             if(this.algorithm==5){
                 this.pagesForOPT.shift();
             }
-            this.runMRUClock(ptrIdentifier);
+            this.runClock(pageIdentifier);
             this.ram += pageSize;
             this.fragmentation += 4096-pageSize;
             //this.simulationInformation(newPagina, ptr);
@@ -330,7 +329,7 @@ class MMU {
                     if (this.tablaPaginasFisicas[i] == -1){
                         this.tablaPaginasFisicas[i] = pageIdentifier;
                         this.realPages++;
-                        this.runMRUClock(ptrIdentifier);
+                        this.runClock(pageIdentifier);
                         this.hit();
                         this.ram += pageSize;
                         this.fragmentation += 4096-pageSize;
@@ -398,6 +397,7 @@ class MMU {
                 element[1].forEach(page =>{
                     if(page.idPage == pageReplaced){
                         pageRSize = page.pagePTRSize;
+                        page.timestamp = 0;
                     }
                     if (page.idPage == pagetoPlace){
                         pagePSize = page.pagePTRSize;
@@ -409,7 +409,7 @@ class MMU {
             this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
             let segmentpos = this.tablaPaginasFisicas.length;
             this.tablaPaginasFisicas.push(pagetoPlace);
-            this.runMRUClock(ptrOfPage);
+            this.runClock(pagetoPlace);
             return segmentpos;
         }
         //SC
@@ -429,9 +429,14 @@ class MMU {
                                     page.mark = 0;
                                 }
                                 this.tablaPaginasFisicas.push(page.idPage);
-                            }else{                                
-                                this.tablaPaginasFisicas.push(pagetoPlace);
-                                done = 0;
+                            }else{    
+                                if (element[0] != ptrOfPage){
+                                    this.tablaPaginasFisicas.push(pagetoPlace);
+                                    done = 0;    
+                                }else{
+                                    this.tablaPaginasFisicas.push(page.idPage);
+                                }                            
+                                
                             }
                         }            
                     });
@@ -447,7 +452,7 @@ class MMU {
                             pageRSize = page.pagePTRSize;
                             page.flag = 1;
                             page.pointerPage = (page.idPage*-1)-1;
-                            page.mark = 1;
+                            page.mark = 0;
                         }
                         if (page.idPage == pagetoPlace){
                             pagePSize = page.pagePTRSize;
@@ -463,7 +468,7 @@ class MMU {
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
             this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
-            this.runMRUClock(ptrOfPage);
+            this.runClock(pagetoPlace);
             return segmentpos;
         }
         //MRU
@@ -551,7 +556,7 @@ class MMU {
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
             this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
-            this.runMRUClock(ptrOfPage);
+            this.runClock(pagetoPlace);
             return segmentpos;
         }
         //----------------------------------------------------------
@@ -599,15 +604,32 @@ class MMU {
             return pageToReplace;  // Retornar la posición del segmento afectado
         }
     }
-    simulationInformation(page, ptr){
-        let a = [];
-        a.push([page.idPage, ptr, page.flag?"":"x", page.flag?"_":page.pointerPage, page.flag?page.pointerPage:"_", 
+    mmuInformation(){
+        let mmuMatriz = [];
+        this.symbolTable.forEach(proceso => {
+            proceso[1].forEach(puntero =>{
+                console.log(puntero.id)
+                this.memoryMap.forEach(element=>{
+                    if (element[0] == puntero.pid){
+                        element[1].forEach(pagina =>{
+                            mmuMatriz.push([pagina.idPage, proceso[0], pagina.flag?" ":"x", puntero.pid, 
+                                pagina.flag? " ":pagina.pointerPage, pagina.flag?pagina.pointerPage:" ", 
+                                pagina.flag?" ":pagina.timestamp+"s", pagina.mark?"x":" "])
+                        });
+                    }
+                });
+            });
+        });
+
+
+        /*a.push([page.idPage, ptr, page.flag?"":"x", page.flag?"_":page.pointerPage, page.flag?page.pointerPage:"_", 
             (this.algorithm== 2||this.algorithm==3)?(this.algorithm==2?page.mark:page.timestamp):" "]);
-        
-        a.push([this.symbolTable.length, this.clock, this.ram, parseFloat(((this.ram/409600)*100).toFixed(1)), 
-            this.vram, parseFloat(((this.vram/this.ram)*100).toFixed(1)), 
-            this.thrashing, parseFloat(((this.thrashing/this.clock)*100).toFixed(1))]);
+        */let a = [];
+        a.push(["procesos:"+this.symbolTable.length, "SIM-T:"+this.clock, "RAM KB:"+this.ram, "RAM %:"+parseFloat(((this.ram/409600)*100).toFixed(1)), 
+            "V-RAM KB:"+this.vram, "V-RAM %:"+parseFloat(((this.vram/this.ram)*100).toFixed(1)), 
+            "thrashing s:"+this.thrashing, "trashing %:"+parseFloat(((this.thrashing/this.clock)*100).toFixed(1)), "fragmentation:"+this.fragmentation+"KB"]);
         console.log (a);
+        return mmuMatriz;
     }
     
 }
@@ -615,19 +637,22 @@ class MMU {
 
 
 // Ejemplo de uso:
-let newMMU = new MMU(1, 6234);
+let newMMU = new MMU(2, 6234);
 newMMU.new(1,2500);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 console.log(newMMU.fragmentation);
+console.log(newMMU.mmuInformation());
 newMMU.new(1,5000);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 console.log(newMMU.fragmentation);
+console.log(newMMU.mmuInformation());
 newMMU.new(1,5000);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 console.log(newMMU.fragmentation);
+console.log(newMMU.mmuInformation());
 newMMU.new(1,2500);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
@@ -638,6 +663,7 @@ console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 console.log(newMMU.fragmentation);
 console.log(newMMU.clock);
+console.log(newMMU.mmuInformation());
 /*newMMU.new(1,250);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);

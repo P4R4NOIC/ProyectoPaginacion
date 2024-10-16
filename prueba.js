@@ -585,8 +585,8 @@ class MMU {
             let replacedPage = this.tablaPaginasFisicas[pageToReplace];
             this.tablaPaginasFisicas[pageToReplace] = pageToPlace;
 
-            let pageRSize;
-            let pagePSize;
+            let pageRSize = 0;
+            let pagePSize = 0;
             // Actualizar el memoryMap para reflejar el reemplazo
             this.memoryMap.forEach(segment => {
                 segment[1].forEach(page => {

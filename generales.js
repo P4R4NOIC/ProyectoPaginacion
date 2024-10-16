@@ -179,7 +179,7 @@ function llamarFunc(){
         //data = "new(1, 250):new(1, 345):use(1):use(1):delete(0):kill(1)".split(':');
         data = resultado.split(':');
         texto = data.join('\n')
-        console.log(texto);
+        //console.log(texto);
         blob = new Blob([texto], { type: 'text/plain' });
 
     }
@@ -247,7 +247,7 @@ function parseFile() {
     //FIN MMU
 
     lines.forEach(line => {
-        console.log(line); 
+        //console.log(line); 
         if (line.startsWith("new")) {
             const args = line.match(/\(([^)]+)\)/);
             if (args) {
@@ -284,6 +284,7 @@ function parseFile() {
 }
 
 function processNextLine() {
+    
     const fileContent = JSON.parse(localStorage.getItem("fileContent"));
     
     if (!fileContent) {
@@ -294,7 +295,7 @@ function processNextLine() {
     const lines = fileContent.split('\n'); 
     if (!pausado && currentIndex < lines.length) { // Solo ejecuta si no está en pausa y hay líneas por procesar
         const line = lines[currentIndex];
-        console.log(line);
+        //console.log(line);
         
         if (line.startsWith("new")) {
             const args = line.match(/\(([^)]+)\)/);
@@ -326,17 +327,104 @@ function processNextLine() {
             }
         }
 
-        console.log("SELECTED");
-        console.log(JSON.parse(JSON.stringify(selectedMMU)));
-        console.log("OPTIMO");
-        console.log(JSON.parse(JSON.stringify(optMMU)));
+        //console.log("SELECTED");
+        //console.log(JSON.parse(JSON.stringify(selectedMMU)));
+        //console.log("OPTIMO");
+       // console.log(JSON.parse(JSON.stringify(optMMU)));
+        //console.log(optMMU.mmuInformation())
+        //console.log(optMMU.mmuInformation().length)
+
+        var bodyElement = document.getElementById("body1");
+
+
+
+        while (bodyElement.children.length > 1) {
+            bodyElement.removeChild(bodyElement.lastChild);
+        }
+
+
+        for (var i = 0; i < optMMU.mmuInformation().length; i++) {
+            var tr = document.createElement("tr");
+            tr.id = "trOPT" + i; 
+
+            for (var j = 0; j < 8; j++) {
+                var td = document.createElement("td");
+                td.classList.add("verde"); 
+
+     
+                td.textContent = optMMU.mmuInformation()[i][j];
+
+    
+                tr.appendChild(td);
+            }
+
+    
+            bodyElement.appendChild(tr);
+        }
+
+        var bodyElement = document.getElementById("body2");
+
+
+
+        while (bodyElement.children.length > 1) {
+            bodyElement.removeChild(bodyElement.lastChild);
+        }
+
+
+        for (var i = 0; i < selectedMMU.mmuInformation().length; i++) {
+            var tr = document.createElement("tr");
+            tr.id = "trOPT" + i; 
+
+            for (var j = 0; j < 8; j++) {
+                var td = document.createElement("td");
+                td.classList.add("verde"); 
+
+     
+                td.textContent = selectedMMU.mmuInformation()[i][j];
+
+    
+                tr.appendChild(td);
+            }
+
+    
+            bodyElement.appendChild(tr);
+        }
+
+         //Carga de info OPT
+        document.getElementById("procOPT").textContent = optMMU.symbolTable.length
+        document.getElementById("simTOPT").textContent = optMMU.clock + "s"
+        document.getElementById("RAMOPT").textContent = optMMU.ram / 100
+        document.getElementById("RAMPOPT").textContent = parseFloat(((optMMU.ram/409600)*100).toFixed(1)) + "%"
+        document.getElementById("VRAMOPT").textContent = optMMU.vram / 100
+        document.getElementById("VRAMPOPT").textContent = parseFloat(((optMMU.vram/optMMU.ram)*100).toFixed(1))+ "%"
+        document.getElementById("loadOPT").textContent = optMMU.tablaPaginasFisicas.length
+        document.getElementById("unloadOPT").textContent = 100 - optMMU.tablaPaginasFisicas.length
+        document.getElementById("trashOPT").textContent = optMMU.thrashing + "s"
+        document.getElementById("trashPOPT").textContent = parseFloat(((optMMU.thrashing/optMMU.clock)*100).toFixed(1)) + "%"
+        document.getElementById("fragOPT").textContent = optMMU.fragmentation/100 + "KB"
+        
+        //Carga info ALG
+        document.getElementById("procALG").textContent = selectedMMU.symbolTable.length
+        document.getElementById("simTALG").textContent = selectedMMU.clock + "s"
+        document.getElementById("RAMALG").textContent = selectedMMU.ram / 100
+        document.getElementById("RAMPALG").textContent = parseFloat(((selectedMMU.ram/409600)*100).toFixed(1)) + "%"
+        document.getElementById("VRAMALG").textContent = selectedMMU.vram / 100
+        document.getElementById("VRAMPALG").textContent = parseFloat(((selectedMMU.vram/selectedMMU.ram)*100).toFixed(1))+ "%"
+        document.getElementById("loadALG").textContent = selectedMMU.tablaPaginasFisicas.length
+        document.getElementById("unloadALG").textContent = 100 - selectedMMU.tablaPaginasFisicas.length
+        document.getElementById("trashALG").textContent = selectedMMU.thrashing + "s"
+        document.getElementById("trashPALG").textContent = parseFloat(((selectedMMU.thrashing/selectedMMU.clock)*100).toFixed(1)) + "%"
+        document.getElementById("fragALG").textContent = selectedMMU.fragmentation/100 + "KB"
+       
+
+
 
         currentIndex++; // Incrementar el índice después de procesar la línea
     }
 
     // Si aún hay líneas por procesar, volver a ejecutar processNextLine después de 5 segundos
     if (currentIndex < lines.length) {
-        setTimeout(processNextLine, 5000); // Espera 5 segundos para procesar la siguiente línea
+        setTimeout(processNextLine, 100); // Espera 5 segundos para procesar la siguiente línea
     } else {
         console.log("Todas las líneas han sido procesadas."); // Mensaje opcional cuando se completan todas las líneas
     }
@@ -392,124 +480,75 @@ function cargarSim(){
 
 function generateCells(){
     parseFile();
-    
+    console.log("selected mmu")
+    console.log(selectedMMU)
+    console.log("opt mmu")
+    console.log(optMMU)
     var texto = localStorage.getItem("algoritmo")
     document.getElementById("mmu").textContent = "MMU - " + texto
     document.getElementById("ram").textContent = "RAM - " + texto
+
+    //Carga de info OPT
+    document.getElementById("procOPT").textContent = optMMU.symbolTable.length
+    document.getElementById("simTOPT").textContent = optMMU.clock + "s"
+    document.getElementById("RAMOPT").textContent = optMMU.ram / 100
+    document.getElementById("RAMPOPT").textContent = (optMMU.ram / 400)*100 + "%"
+    document.getElementById("VRAMOPT").textContent = optMMU.vram / 100
+    document.getElementById("VRAMPOPT").textContent = (optMMU.vram / 400)*100 + "%"
+    document.getElementById("loadOPT").textContent = optMMU.tablaPaginasFisicas.length
+    document.getElementById("unloadOPT").textContent = 100 - optMMU.tablaPaginasFisicas.length
+    document.getElementById("trashOPT").textContent = optMMU.thrashing + "s"
+    document.getElementById("trashPOPT").textContent = 0 +  "%"
+    document.getElementById("fragOPT").textContent = optMMU.fragmentation
+
+    //Carga de info ALG
+    document.getElementById("procALG").textContent = selectedMMU.symbolTable.length
+    document.getElementById("simTALG").textContent = selectedMMU.clock + "s"
+    document.getElementById("RAMALG").textContent = selectedMMU.ram / 100
+    document.getElementById("RAMPALG").textContent = (selectedMMU.ram / 400)*100 + "%"
+    document.getElementById("VRAMALG").textContent = selectedMMU.vram / 100
+    document.getElementById("VRAMPALG").textContent = (selectedMMU.vram / 400)*100 + "%"
+    document.getElementById("loadALG").textContent = selectedMMU.tablaPaginasFisicas.length
+    document.getElementById("unloadALG").textContent = 100 - selectedMMU.tablaPaginasFisicas.length
+    document.getElementById("trashALG").textContent = selectedMMU.thrashing + "s"
+    document.getElementById("trashPALG").textContent = 0 +  "%"
+    document.getElementById("fragALG").textContent = selectedMMU.fragmentation
+
+
+   
     for(var i = 0; i<100; i++){
         var td = document.createElement("td");
-
-        if(i<=15){
-            td.classList = "verde"
-        }
+        td.id = "tdOPT"
         
-        if(15<i && i<=30){
-            td.classList = "amarillo"
-        }
-        if(30<i && i<=45){
-            td.classList = "rosa"
-        }
-        if(45<i && i<=60){
-            td.classList = "azul"
-        }
-        if(60<i && i<=  75){
-            td.classList = "naranja"
-        }
-        if(75<i && i<=  100){
-            td.classList = "blanco"
-        }
-            
+            td.classList = "verde"
+     
 
         document.getElementById("prim1").appendChild(td);
 
         var tr = document.createElement("tr");
-
-        
        
-
-        for(var j = 0; j<8; j++){
-            var td2 = document.createElement("td");
-
-            if(i<=15){
-                td2.classList = "verde"
-            }
-            if(15<i && i<=30){
-                td2.classList = "amarillo"
-            }
-            if(30<i && i<=45){
-                td2.classList = "rosa"
-            }
-            if(45<i && i<=60){
-                td2.classList = "azul"
-            }
-            if(60<i && i<=  75){
-                td2.classList = "naranja"
-            }
-            if(75<i && i<=  100){
-                td2.classList = "blanco"
-            }
-            if(j == 0)
-                td2.textContent = i+1
-            tr.appendChild(td2);
-        }
+        tr.id = "trOPT"
+    
 
         document.getElementById("body1").appendChild(tr);
         
-        
     }
+        
+        
+    
     for(var i = 0; i<100; i++){
         var td = document.createElement("td");
         
-        if(i<=15){
+        
             td.classList = "verde"
-        }
-        if(15<i && i<=30){
-            td.classList = "amarillo"
-        }
-        if(30<i && i<=45){
-            td.classList = "rosa"
-        }
-        if(45<i && i<=60){
-            td.classList = "azul"
-        }
-        if(60<i && i<=  75){
-            td.classList = "naranja"
-        }
-        if(75<i && i<=  100){
-            td.classList = "blanco"
-        }
+     
 
         document.getElementById("prim2").appendChild(td);
 
         var tr = document.createElement("tr");
        
 
-        for(var j = 0; j<8; j++){
-            var td2 = document.createElement("td");
-
-            if(i<=15){
-                td2.classList = "verde"
-            }
-            if(15<i && i<=30){
-                td2.classList = "amarillo"
-            }
-            if(30<i && i<=45){
-                td2.classList = "rosa"
-            }
-            if(45<i && i<=60){
-                td2.classList = "azul"
-            }
-            if(60<i && i<=  75){
-                td2.classList = "naranja"
-            }
-            if(75<i && i<=  100){
-                td2.classList = "blanco"
-            }
-
-            if(j == 0)
-                td2.textContent = i+1
-            tr.appendChild(td2);
-        }
+       
 
         document.getElementById("body2").appendChild(tr);
         

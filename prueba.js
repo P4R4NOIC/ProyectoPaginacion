@@ -115,7 +115,7 @@ class MMU {
         });
         if(flag){
             this.symbolTable.push([pid, [newPTR]]);
-            console.log("Process not Found");
+           // console.log("Process not Found");
             
         }
         
@@ -142,7 +142,7 @@ class MMU {
         let processId;
         this.symbolTable.forEach(element =>{
             element[1].forEach(pointer =>{
-                console.log(pointer);
+               // console.log(pointer);
                 if (pointer.pid == ptr){
                     flag = 1;
                     processId = element[0];
@@ -203,7 +203,7 @@ class MMU {
                 }
             });
         }else{
-            console.log("Pointer not found.")
+            //console.log("Pointer not found.")
         }
     }
 
@@ -238,7 +238,7 @@ class MMU {
                 for (let i = 0; i < memoryMap.length; i++) {
                     if (memoryMap[i][0] == ptr) {
                         memoryMap.splice(i, 1); // Elimina el elemento en la posición i
-                        console.log(`Elemento con ptr ${ptr} eliminado del memoryMap.`);
+                      //  console.log(`Elemento con ptr ${ptr} eliminado del memoryMap.`);
                         break; // Sale del bucle una vez que el elemento es eliminado
                     }
                 }
@@ -259,7 +259,7 @@ class MMU {
         listaSimbolos.forEach(element => {
             if(element[0]==pid){
                 element[1].forEach(ptr => {
-                    console.log(this.tablaPaginasFisicas);
+                    //console.log(this.tablaPaginasFisicas);
                     this.delete(ptr.pid);
                     
                 });
@@ -306,10 +306,10 @@ class MMU {
     //funcion que asigna la direccion inicial de memoria de la pagina
     //esta direccion depende si hay espacio en memoreal si no replaceAlgorithm
     assignSegment(pageIdentifier, ptrIdentifier, pageSize){
-        if (this.paginas < 4){
+        if (this.paginas < 100){
             this.realPages++;
             this.tablaPaginasFisicas.push(pageIdentifier);
-            console.log(pageIdentifier);
+            //console.log(pageIdentifier);
             this.hit();
             if(this.algorithm!=5){
                 this.pagesForOPT.push(pageIdentifier);
@@ -323,8 +323,8 @@ class MMU {
             //this.simulationInformation(newPagina, ptr);
             return this.paginas;
         }else{
-            if (this.realPages < 4){
-                console.log(pageIdentifier);
+            if (this.realPages < 100){
+                //console.log(pageIdentifier);
                 for (let i = 0; i< this.tablaPaginasFisicas.length;i++){
                     if (this.tablaPaginasFisicas[i] == -1){
                         this.tablaPaginasFisicas[i] = pageIdentifier;
@@ -523,7 +523,7 @@ class MMU {
             while(done){
                 let replaceFlag = 1;
                 segmentpos = this.randomGenerator.random(0, this.tablaPaginasFisicas.length-1);
-                console.log(segmentpos);
+                //console.log(segmentpos);
                 pageReplaced = this.tablaPaginasFisicas[segmentpos];
                 for(let element of this.memoryMap){
                     element[1].forEach(page =>{
@@ -608,7 +608,7 @@ class MMU {
         let mmuMatriz = [];
         this.symbolTable.forEach(proceso => {
             proceso[1].forEach(puntero =>{
-                console.log(puntero.id)
+                //console.log(puntero.id)
                 this.memoryMap.forEach(element=>{
                     if (element[0] == puntero.pid){
                         element[1].forEach(pagina =>{
@@ -628,23 +628,23 @@ class MMU {
         a.push(["procesos:"+this.symbolTable.length, "SIM-T:"+this.clock, "RAM KB:"+this.ram, "RAM %:"+parseFloat(((this.ram/409600)*100).toFixed(1)), 
             "V-RAM KB:"+this.vram, "V-RAM %:"+parseFloat(((this.vram/this.ram)*100).toFixed(1)), 
             "thrashing s:"+this.thrashing, "trashing %:"+parseFloat(((this.thrashing/this.clock)*100).toFixed(1)), "fragmentation:"+this.fragmentation+"KB"]);
-        console.log (a);
+        //console.log (a);
         return mmuMatriz;
     }
     
 }
 
 
-
+/*
 // Ejemplo de uso:
 let newMMU = new MMU(2, 6234);
 newMMU.new(1,2500);
-console.log(newMMU.tablaPaginasFisicas);
-console.log(newMMU.memoryMap);
-console.log(newMMU.fragmentation);
-console.log(newMMU.mmuInformation());
+//console.log(newMMU.tablaPaginasFisicas);
+//console.log(newMMU.memoryMap);
+//console.log(newMMU.fragmentation);
+//console.log(newMMU.mmuInformation());
 newMMU.new(1,5000);
-console.log(newMMU.tablaPaginasFisicas);
+//console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 console.log(newMMU.fragmentation);
 console.log(newMMU.mmuInformation());
@@ -687,7 +687,7 @@ newMMU.use(2);
 console.log(newMMU.tablaPaginasFisicas);
 console.log(newMMU.memoryMap);
 console.log(newMMU.thrashing);*/
-
+/*
 let newMMU2 = new MMU(5, 2526);
 newMMU2.symbolTable.push([1, []]);
 newMMU2.pagesForOPT = newMMU.pagesForOPT;
@@ -753,4 +753,4 @@ console.log(newMMU2.clock);
 // newMMU3.delete(0)
 // console.log(newMMU3);
 // newMMU3.kill(1)
-// console.log(newMMU3);
+// console.log(newMMU3);*/

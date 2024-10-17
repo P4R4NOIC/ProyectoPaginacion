@@ -124,10 +124,10 @@ class MMU {
         this.memoryMap.push(nmMap);
         let pageSize = size;
         let newPagina;
-        for (let i = 0; i< Math.ceil(size/4096); i++){
-            if (pageSize >= 4096){
-                newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas, newPTR.pid, 4096, pid), 0, 0, 4096);
-                pageSize -= 4096;
+        for (let i = 0; i< Math.ceil(size/4000); i++){
+            if (pageSize >= 4000){
+                newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas, newPTR.pid, 4000, pid), 0, 0, 4000);
+                pageSize -= 4000;
             }else{
                 newPagina = new PAGE(this.paginas, this.assignSegment(this.paginas, newPTR.pid, pageSize, pid), 0, 0, pageSize);
             }
@@ -242,7 +242,7 @@ class MMU {
                                 this.vram -= page.pagePTRSize;
                             }else{
                                 this.ram -= page.pagePTRSize;
-                                this.fragmentation -= 4096-page.pagePTRSize;
+                                this.fragmentation -= 4000-page.pagePTRSize;
                             }
                         });
                         memoryMap.splice(i, 1); // Elimina el elemento en la posición i
@@ -327,7 +327,7 @@ class MMU {
             }
             this.runClock(pageIdentifier);
             this.ram += pageSize;
-            this.fragmentation += 4096-pageSize;
+            this.fragmentation += 4000-pageSize;
             //this.simulationInformation(newPagina, ptr);
             return this.paginas;
         }else{
@@ -340,7 +340,7 @@ class MMU {
                         this.runClock(pageIdentifier);
                         this.hit();
                         this.ram += pageSize;
-                        this.fragmentation += 4096-pageSize;
+                        this.fragmentation += 4000-pageSize;
                         if(this.algorithm!=5){
                             this.pagesForOPT.push(pageIdentifier);
                         }
@@ -438,7 +438,7 @@ class MMU {
             });
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
-            this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
+            this.fragmentation += (pageSize == 0 ? (4000-pagePSize) - (4000-pageRSize) : (4000-pageSize) - (4000-pageRSize));
             let segmentpos = this.tablaPaginasFisicas.length;
             this.tablaPaginasFisicas.push(pagetoPlace);
             this.runClock(pagetoPlace);
@@ -499,7 +499,7 @@ class MMU {
             }
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
-            this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
+            this.fragmentation += (pageSize == 0 ? (4000-pagePSize) - (4000-pageRSize) : (4000-pageSize) - (4000-pageRSize));
             this.runClock(pagetoPlace);
             return segmentpos;
         }
@@ -540,7 +540,7 @@ class MMU {
             }
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
-            this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
+            this.fragmentation += (pageSize == 0 ? (4000-pagePSize) - (4000-pageRSize) : (4000-pageSize) - (4000-pageRSize));
             this.runMRUClock(ptrOfPage);
             return segmentpos;
         }
@@ -587,7 +587,7 @@ class MMU {
             }
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
-            this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
+            this.fragmentation += (pageSize == 0 ? (4000-pagePSize) - (4000-pageRSize) : (4000-pageSize) - (4000-pageRSize));
             this.runClock(pagetoPlace);
             return segmentpos;
         }
@@ -637,7 +637,7 @@ class MMU {
             });
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
-            this.fragmentation += (pageSize == 0 ? (4096-pagePSize) - (4096-pageRSize) : (4096-pageSize) - (4096-pageRSize));
+            this.fragmentation += (pageSize == 0 ? (4000-pagePSize) - (4000-pageRSize) : (4000-pageSize) - (4000-pageRSize));
             this.runClock(pagetoPlace);
             //(`Página colocada: ${pageToPlace}, Página reemplazada: ${replacedPage}`);
             return pageToReplace;  // Retornar la posición del segmento afectado
@@ -664,7 +664,7 @@ class MMU {
         /*a.push([page.idPage, ptr, page.flag?"":"x", page.flag?"_":page.pointerPage, page.flag?page.pointerPage:"_", 
             (this.algorithm== 2||this.algorithm==3)?(this.algorithm==2?page.mark:page.timestamp):" "]);
         */let a = [];
-        a.push(["procesos:"+this.symbolTable.length, "SIM-T:"+this.clock, "RAM KB:"+this.ram, "RAM %:"+parseFloat(((this.ram/409600)*100).toFixed(1)), 
+        a.push(["procesos:"+this.symbolTable.length, "SIM-T:"+this.clock, "RAM KB:"+this.ram, "RAM %:"+parseFloat(((this.ram/400000)*100).toFixed(1)), 
             "V-RAM KB:"+this.vram, "V-RAM %:"+parseFloat(((this.vram/this.ram)*100).toFixed(1)), 
             "thrashing s:"+this.thrashing, "trashing %:"+parseFloat(((this.thrashing/this.clock)*100).toFixed(1)), "fragmentation:"+this.fragmentation+"KB"]);
         //console.log (a);

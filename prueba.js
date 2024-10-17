@@ -140,6 +140,19 @@ class MMU {
     use(ptr){
         let flag = 0;
         let processId;
+        for (const element of  this.symbolTable){
+            for (pointer of element[1]){
+                if (pointer.pid == ptr){
+                    flag = 1;
+                    processId = element[0];
+                    break;
+                }
+            }
+            if (flag){
+                break;
+            }
+        }
+        /*
         this.symbolTable.forEach(element =>{
             element[1].forEach(pointer =>{
                // console.log(pointer);
@@ -148,7 +161,7 @@ class MMU {
                     processId = element[0];
                 }
             });
-        });
+        });*/
         
         if (flag){
             this.memoryMap.forEach(element =>{
@@ -212,7 +225,8 @@ class MMU {
     // en la parte de creacion de operaciones este existira si existe un ptr en la ts
     delete(ptr){
         //update de dylan cambio en la tablaPaginasFisicas
-        this.memoryMap.forEach(element =>{
+        for (let element of this.memoryMap){
+           let flagDone = 0;
             if (ptr == element[0]){
                 element[1].forEach(page =>{
                     if (page.flag == 0){
@@ -220,9 +234,31 @@ class MMU {
                         this.realPages--;
                     }
                     
-                });   
+                }); 
+                flagDone = 1;
+            }
+            if (flagDone){
+                break;
+            } 
+        }
+        /*
+        this.memoryMap.forEach(element =>{
+            let flagDone = 0;
+            if (ptr == element[0]){
+                element[1].forEach(page =>{
+                    if (page.flag == 0){
+                        this.tablaPaginasFisicas[page.pointerPage] = -1;
+                        this.realPages--;
+                    }
+                    
+                }); 
+                flagDone = 1;
+            }
+            if (flagDone){
+                break;
             }
         });
+        */
         //-------------------------------------------------
         let lista = this.symbolTable;
         let mensaje = "No se encontro el puntero";
@@ -263,7 +299,22 @@ class MMU {
     kill(pid){
         let listaSimbolos = this.symbolTable;
         
-        
+        for (let element of listaSimbolos){
+            let flagDone = 0;
+            if(element[0]==pid){
+                element[1].forEach(ptr => {
+                    //console.log(this.tablaPaginasFisicas);
+                    this.delete(ptr.pid);
+                    
+                });
+                flagDone =1;
+                
+            }
+            if (flagDone){
+                break;
+            }
+        }
+        /*
         listaSimbolos.forEach(element => {
             if(element[0]==pid){
                 element[1].forEach(ptr => {
@@ -273,7 +324,7 @@ class MMU {
                 });
                 
             }
-        });
+        });*/
 
         this.symbolTable = listaSimbolos.filter(element => element[0] !== pid);
         this.runClock(null);
@@ -283,7 +334,24 @@ class MMU {
 
     runMRUClock(ptr){
         this.tablaPaginasFisicas.forEach(pageS=>{
+            let flagDone = 0;
             for(let i =0; i < this.memoryMap.length; i++){
+                for (let page of this.memoryMap[i][1]){
+                    if (pageS == page.idPage){
+                        if (this.memoryMap[i][0] != ptr){
+                            page.timestamp++;
+                        }else{
+                            page.timestamp = 0;
+                        }
+                        flagDone = 1;
+                        break
+                    }
+                    
+                }
+                if (flagDone){
+                    break:
+                }
+                /*
                 this.memoryMap[i][1].forEach(page =>{
                     if (pageS == page.idPage){
                         if (this.memoryMap[i][0] != ptr){
@@ -291,14 +359,37 @@ class MMU {
                         }else{
                             page.timestamp = 0;
                         }
+                        flagDone = 1;
                     }
-                });
+                    if (flagDone){
+                        break:
+                    }
+                });*/
             }
         });
     }
     runClock(pageId){
         this.tablaPaginasFisicas.forEach(pageS=>{
+            let flagDone = 0;
             for(let i =0; i < this.memoryMap.length; i++){
+                for (let page of this.memoryMap[i][1]){
+                    if (pageS == page.idPage){
+                        if (page.idPage != pageId){
+                            page.timestamp++;
+                        }else{
+                            page.timestamp = 0;
+                        }
+                        flagDone = 1;
+                        break
+                    }
+                    
+                }
+                if (flagDone){
+                    break:
+                }
+                
+            }
+            /*for(let i =0; i < this.memoryMap.length; i++){
                 this.memoryMap[i][1].forEach(page =>{
                     if (pageS == page.idPage){
                         if (page.idPage != pageId){
@@ -308,7 +399,7 @@ class MMU {
                         }
                     }
                 });
-            }
+            }*/
         });
     }
     //funcion que asigna la direccion inicial de memoria de la pagina
@@ -645,7 +736,26 @@ class MMU {
     }
     mmuInformation(){
         let mmuMatriz = [];
-        this.symbolTable.forEach(proceso => {
+        let find;
+        for(const proceso of this.symbolTable){
+            for(const puntero of proceso[1]){
+                find = 0;
+                for (const element of this.memoryMap){
+                    if (element[0] == puntero.pid){
+                        for(const pagina of element[1]){
+                            mmuMatriz.push([pagina.idPage, proceso[0], pagina.flag?" ":"x", puntero.pid, 
+                                pagina.flag? " ":pagina.pointerPage, pagina.flag?pagina.pointerPage:" ", 
+                                pagina.flag?" ":pagina.timestamp+"s", pagina.mark?"x":" "])
+                        }
+                        find = 1;
+                    }
+                    if (find){
+                        break;
+                    }
+                }
+            }
+        }
+        /*this.symbolTable.forEach(proceso => {
             proceso[1].forEach(puntero =>{
                 //console.log(puntero.id)
                 this.memoryMap.forEach(element=>{
@@ -658,7 +768,7 @@ class MMU {
                     }
                 });
             });
-        });
+        });*/
 
 
         /*a.push([page.idPage, ptr, page.flag?"":"x", page.flag?"_":page.pointerPage, page.flag?page.pointerPage:"_", 

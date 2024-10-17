@@ -237,6 +237,14 @@ class MMU {
                 let memoryMap = this.memoryMap;
                 for (let i = 0; i < memoryMap.length; i++) {
                     if (memoryMap[i][0] == ptr) {
+                        memoryMap[i][1].forEach(page =>{
+                            if (page.flag){
+                                this.vram -= page.pagePTRSize;
+                            }else{
+                                this.ram -= page.pagePTRSize;
+                                this.fragmentation -= 4096-page.pagePTRSize;
+                            }
+                        });
                         memoryMap.splice(i, 1); // Elimina el elemento en la posición i
                       //  console.log(`Elemento con ptr ${ptr} eliminado del memoryMap.`);
                         break; // Sale del bucle una vez que el elemento es eliminado

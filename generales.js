@@ -387,15 +387,15 @@ function processNextLine() {
          //Carga de info OPT
         document.getElementById("procOPT").textContent = optMMU.symbolTable.length
         document.getElementById("simTOPT").textContent = optMMU.clock + "s"
-        document.getElementById("RAMOPT").textContent = optMMU.ram / 100
+        document.getElementById("RAMOPT").textContent = optMMU.ram / 1000
         document.getElementById("RAMPOPT").textContent = parseFloat(((optMMU.ram/40960)*100).toFixed(1)) + "%"
-        document.getElementById("VRAMOPT").textContent = optMMU.vram / 100
+        document.getElementById("VRAMOPT").textContent = optMMU.vram / 1000
         document.getElementById("VRAMPOPT").textContent = parseFloat(((optMMU.vram/optMMU.ram)*100).toFixed(1))+ "%"
         document.getElementById("loadOPT").textContent = optMMU.tablaPaginasFisicas.length
         document.getElementById("unloadOPT").textContent = 100 - optMMU.tablaPaginasFisicas.length
         document.getElementById("trashOPT").textContent = optMMU.thrashing + "s"
         document.getElementById("trashPOPT").textContent = thrashingOPT + "%"
-        document.getElementById("fragOPT").textContent = optMMU.fragmentation/100 + "KB"
+        document.getElementById("fragOPT").textContent = optMMU.fragmentation/1000 + "KB"
         
         if(thrashingOPT>50){
             document.getElementById("trashPOPT").classList = "rojo"
@@ -409,15 +409,15 @@ function processNextLine() {
         //Carga info ALG
         document.getElementById("procALG").textContent = selectedMMU.symbolTable.length
         document.getElementById("simTALG").textContent = selectedMMU.clock + "s"
-        document.getElementById("RAMALG").textContent = selectedMMU.ram / 100
+        document.getElementById("RAMALG").textContent = selectedMMU.ram / 1000
         document.getElementById("RAMPALG").textContent = parseFloat(((selectedMMU.ram/40960)*100).toFixed(1)) + "%"
-        document.getElementById("VRAMALG").textContent = selectedMMU.vram / 100
+        document.getElementById("VRAMALG").textContent = selectedMMU.vram / 1000
         document.getElementById("VRAMPALG").textContent = parseFloat(((selectedMMU.vram/selectedMMU.ram)*100).toFixed(1))+ "%"
         document.getElementById("loadALG").textContent = selectedMMU.tablaPaginasFisicas.length
         document.getElementById("unloadALG").textContent = 100 - selectedMMU.tablaPaginasFisicas.length
         document.getElementById("trashALG").textContent = selectedMMU.thrashing + "s"
         document.getElementById("trashPALG").textContent = thrashingALG + "%"
-        document.getElementById("fragALG").textContent = selectedMMU.fragmentation/100 + "KB"
+        document.getElementById("fragALG").textContent = selectedMMU.fragmentation/1000 + "KB"
 
         if(thrashingALG>50){
             document.getElementById("trashALG").classList = "rojo"

@@ -607,42 +607,40 @@ class MMU {
         //----------------------------------------------------------
         //OPT
         if (this.algorithm==5){
-            let pageToPlace = this.pagesForOPT.shift();  // Página a colocar
-            let pageToReplace = -1;  // Índice de la página que será reemplazada
-            let farthestUse = -1;    // Índice más lejano de reutilización
+            let pageToPlace = this.pagesForOPT.shift();  
+            let pageToReplace = -1;  
+            let farthestUse = -1;    
 
-            // Buscar la página que será reemplazada en tablaPaginasFisicas
             this.tablaPaginasFisicas.forEach((idPage, index) => {
-                let futureIndex = this.pagesForOPT.indexOf(idPage);  // Próxima aparición del ID
+                let futureIndex = this.pagesForOPT.indexOf(idPage);  
 
                 if (futureIndex === -1) {
-                    // Si la página no se usará más, marcar para reemplazo inmediato
                     pageToReplace = index;
-                    farthestUse = Infinity;  // Priorizar esta página para reemplazo
+                    farthestUse = Infinity; 
                 } else if (futureIndex > farthestUse) {
-                    // Encontrar la página cuyo uso está más lejos en el futuro
+                    
                     farthestUse = futureIndex;
                     pageToReplace = index;
                 }
             });
 
-            // Realizar el reemplazo en tablaPaginasFisicas
+            
             let replacedPage = this.tablaPaginasFisicas[pageToReplace];
             this.tablaPaginasFisicas[pageToReplace] = pagetoPlace;
 
             let pageRSize = 0;
             let pagePSize = 0;
-            // Actualizar el memoryMap para reflejar el reemplazo
+            
             this.memoryMap.forEach(segment => {
                 segment[1].forEach(page => {
                     if (page.idPage == replacedPage) {
-                        // Marcar la página reemplazada como inactiva
+                        
                         page.flag = 1;
                         page.pointerPage = (page.idPage * -1) - 1;
                         pageRSize = page.pagePTRSize;
                     }
                     if (page.idPage == pagetoPlace) {
-                        // Marcar la nueva página como activa
+                        
                         page.flag = 0;
                         pagePSize = page.pagePTRSize;
                     }
@@ -652,8 +650,8 @@ class MMU {
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
             this.fragmentation += (pageSize == 0 ? (4000-pagePSize) - (4000-pageRSize) : (4000-pageSize) - (4000-pageRSize));
             this.runClock(pagetoPlace);
-            //(`Página colocada: ${pageToPlace}, Página reemplazada: ${replacedPage}`);
-            return pageToReplace;  // Retornar la posición del segmento afectado
+            
+            return pageToReplace; 
         }
     }
     mmuInformation(){

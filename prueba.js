@@ -140,6 +140,19 @@ class MMU {
     use(ptr){
         let flag = 0;
         let processId;
+        for (const element of  this.symbolTable){
+            for (const pointer of element[1]){
+                if (pointer.pid == ptr){
+                    flag = 1;
+                    processId = element[0];
+                    break;
+                }
+            }
+            if (flag){
+                break;
+            }
+        }
+        /*
         this.symbolTable.forEach(element =>{
             element[1].forEach(pointer =>{
                // console.log(pointer);
@@ -149,7 +162,7 @@ class MMU {
                 }
             });
         });
-        
+        */
         if (flag){
             this.memoryMap.forEach(element =>{
                 if (element[0]== ptr){
@@ -645,6 +658,26 @@ class MMU {
     }
     mmuInformation(){
         let mmuMatriz = [];
+        let find;
+        for(const proceso of this.symbolTable){
+            for(const puntero of proceso[1]){
+                find = 0;
+                for (const element of this.memoryMap){
+                    if (element[0] == puntero.pid){
+                        for(const pagina of element[1]){
+                            mmuMatriz.push([pagina.idPage, proceso[0], pagina.flag?" ":"x", puntero.pid, 
+                                pagina.flag? " ":pagina.pointerPage, pagina.flag?pagina.pointerPage:" ", 
+                                pagina.flag?" ":pagina.timestamp+"s", pagina.mark?"x":" "])
+                        }
+                        find = 1;
+                    }
+                    if (find){
+                        break;
+                    }
+                }
+            }
+        }
+        /*
         this.symbolTable.forEach(proceso => {
             proceso[1].forEach(puntero =>{
                 //console.log(puntero.id)
@@ -659,7 +692,7 @@ class MMU {
                 });
             });
         });
-
+            */
 
         /*a.push([page.idPage, ptr, page.flag?"":"x", page.flag?"_":page.pointerPage, page.flag?page.pointerPage:"_", 
             (this.algorithm== 2||this.algorithm==3)?(this.algorithm==2?page.mark:page.timestamp):" "]);
@@ -667,7 +700,7 @@ class MMU {
         a.push(["procesos:"+this.symbolTable.length, "SIM-T:"+this.clock, "RAM KB:"+this.ram, "RAM %:"+parseFloat(((this.ram/400000)*100).toFixed(1)), 
             "V-RAM KB:"+this.vram, "V-RAM %:"+parseFloat(((this.vram/this.ram)*100).toFixed(1)), 
             "thrashing s:"+this.thrashing, "trashing %:"+parseFloat(((this.thrashing/this.clock)*100).toFixed(1)), "fragmentation:"+this.fragmentation+"KB"]);
-        //console.log (a);
+        
         return mmuMatriz;
     }
     

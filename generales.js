@@ -365,7 +365,7 @@ function processNextLine() {
                 if(i > x.length && i < 100){
                     if(x[i][4] == 0)
                         document.getElementById("td" + 0).style.backgroundColor = "#000000"
-                    
+
                     if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
                         document.getElementById("td" + x[i][4]).style.backgroundColor = "#000000"
                    
@@ -576,6 +576,10 @@ function processNextLine() {
         setTimeout(processNextLine, 0); // Espera 5 segundos para procesar la siguiente línea
     } else {
         console.log("Todas las líneas han sido procesadas."); // Mensaje opcional cuando se completan todas las líneas
+        for(var i = 0; i<100; i++){
+            document.getElementById("tm" + i).style.backgroundColor = "#000000"
+            document.getElementById("td" + i).style.backgroundColor = "#000000"
+        }
     }
 }
 

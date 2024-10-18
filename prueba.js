@@ -419,6 +419,9 @@ class MMU {
                     });
                 });
             }
+            
+            let pageRSize;
+            let pagePSize;
             for (let i = 0; i < this.tablaPaginasFisicas.length;i++){
                 this.memoryMap.forEach(element =>{
                     element[1].forEach(page =>{
@@ -428,27 +431,17 @@ class MMU {
                         if(page.idPage == pageReplaced){
                             page.pointerPage = (page.idPage*-1)-1;
                             page.flag = 1;
+                            pageRSize = page.pagePTRSize;
+                            page.timestamp = 0;
                         }
                         if (page.idPage == pagetoPlace){
                             page.flag = 0;
+                            pagePSize = page.pagePTRSize;
                         }
                         
                     });
                 });
             }
-            let pageRSize;
-            let pagePSize;
-            this.memoryMap.forEach(element =>{
-                element[1].forEach(page =>{
-                    if(page.idPage == pageReplaced){
-                        pageRSize = page.pagePTRSize;
-                        page.timestamp = 0;
-                    }
-                    if (page.idPage == pagetoPlace){
-                        pagePSize = page.pagePTRSize;
-                    }
-                });
-            });
             this.ram += (pageSize == 0 ? pagePSize - pageRSize : pageSize - pageRSize);
             this.vram += (pageSize == 0 ? pageRSize - pagePSize : pageRSize);
             this.fragmentation += (pageSize == 0 ? (4000-pagePSize) - (4000-pageRSize) : (4000-pageSize) - (4000-pageRSize));
@@ -574,7 +567,7 @@ class MMU {
                     element[1].forEach(page =>{
                         if (page.idPage == pageReplaced){
                             if(element[0] == ptrOfPage){
-                                replaceFlag = 0;       6
+                                replaceFlag = 0;       
                             }
                         }
                     });
@@ -675,23 +668,7 @@ class MMU {
                 }
             }
         }
-        /*
-        this.symbolTable.forEach(proceso => {
-            proceso[1].forEach(puntero =>{
-                //console.log(puntero.id)
-                this.memoryMap.forEach(element=>{
-                    if (element[0] == puntero.pid){
-                        element[1].forEach(pagina =>{
-                            mmuMatriz.push([pagina.idPage, proceso[0], pagina.flag?" ":"x", puntero.pid, 
-                                pagina.flag? " ":pagina.pointerPage, pagina.flag?pagina.pointerPage:" ", 
-                                pagina.flag?" ":pagina.timestamp+"s", pagina.mark?"x":" "])
-                        });
-                    }
-                });
-            });
-        });
-            */
-
+        
         /*a.push([page.idPage, ptr, page.flag?"":"x", page.flag?"_":page.pointerPage, page.flag?page.pointerPage:"_", 
             (this.algorithm== 2||this.algorithm==3)?(this.algorithm==2?page.mark:page.timestamp):" "]);
         */let a = [];

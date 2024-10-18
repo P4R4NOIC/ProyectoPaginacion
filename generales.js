@@ -363,14 +363,23 @@ function processNextLine() {
 
             if(x.length < 100 && x[4] != undefined){
                 if(i > x.length && i < 100){
+                    if(x[i][4] == 0)
+                        document.getElementById("td" + 0).style.backgroundColor = "#000000"
+                    
                     if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
                         document.getElementById("td" + x[i][4]).style.backgroundColor = "#000000"
                    
                 }else if(optMMU.tablaPaginasFisicas[i] === -1){
+                    if(x[i][4] == 0)
+                        document.getElementById("td" + 0).style.backgroundColor = "#000000"
+
                     if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
                         document.getElementById("td" + x[i][4]).style.backgroundColor = "#000000"
                     
                 }else{
+                    if(x[i][4] == 0)
+                        document.getElementById("td" + 0).style.backgroundColor = colors[x[i][1]]
+
                     if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
                         document.getElementById("td" + x[i][4]).style.backgroundColor = colors[x[i][1]]
                    
@@ -380,10 +389,15 @@ function processNextLine() {
             }else if(i<100 && x[4] != undefined){
 
                 if(optMMU.tablaPaginasFisicas[i] === -1 ){
+                    if(x[i][4] == 0)
+                        document.getElementById("td" + 0).style.backgroundColor = "#000000"
+
                     if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
                         document.getElementById("td" + x[i][4]).style.backgroundColor = "#000000"
                     
                 }else {
+                    if(x[i][4] == 0)
+                        document.getElementById("td" + 0).style.backgroundColor = colors[x[i][1]]
                     
                     if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
                         document.getElementById("td" + x[i][4]).style.backgroundColor = colors[x[i][1]]
@@ -402,7 +416,7 @@ function processNextLine() {
                 td.style.backgroundColor = colors[x[i][1]]
      
                 td.textContent = x[i][j];
-                console.log(x[i][j])
+               // console.log(x[i][j])
     
                 tr.appendChild(td);
 
@@ -425,20 +439,29 @@ function processNextLine() {
        
 
            
-            if(y[i][4] == 0)
-                console.log("es cero")
+           
              
             if(y.length < 100 && y[4] != undefined){
                 if(i > x.length && i < 100){
+                    if(y[i][4] == 0)
+                        document.getElementById("tm" + 0).style.backgroundColor = "#000000"
+
                     if(y[i][4] != ' ' && y[i][4] != undefined &&  y[i][4] >= 0)
                         document.getElementById("tm" + y[i][4]).style.backgroundColor = "#000000"
                    
                 }else if(optMMU.tablaPaginasFisicas[i] === -1){
+                    if(y[i][4] == 0)
+                        document.getElementById("tm" + 0).style.backgroundColor = "#000000"
+
                     if(y[i][4] != ' ' && y[i][4] != undefined &&  y[i][4] >= 0)
                         document.getElementById("tm" + y[i][4]).style.backgroundColor = "#000000"
                     
                 }else{
-                    if(y[i][4] != ' ' && y[i][4] != undefined &&  y[i][4] >= 0)
+                    if(y[i][4] == 0)
+                        document.getElementById("tm" + 0).style.backgroundColor = colors[y[i][1]]
+
+                    if(y[i][4] != ' ' && y[i][4] != undefined && y[i][4] >= 0)
+                       
                         document.getElementById("tm" + y[i][4]).style.backgroundColor = colors[y[i][1]]
                    
 
@@ -446,10 +469,17 @@ function processNextLine() {
 
             }else if(i<100 && y[4] != undefined){
                 if(optMMU.tablaPaginasFisicas[i] === -1){
+                    if(y[i][4] == 0)
+                        document.getElementById("tm" + 0).style.backgroundColor = "#000000"
+
+
                     if(y[i][4] != ' ' && y[i][4] != undefined &&  y[i][4] >= 0)
                         document.getElementById("tm" + y[i][4]).style.backgroundColor = "#000000"
                     
                 }else{
+                    if(y[i][4] == 0)
+                        document.getElementById("tm" + 0).style.backgroundColor = colors[y[i][1]]
+
                     if(y[i][4] != ' ' && y[i][4] != undefined &&  y[i][4] >= 0)
                         document.getElementById("tm" + y[i][4]).style.backgroundColor = colors[y[i][1]]
                 }
@@ -486,7 +516,7 @@ function processNextLine() {
         document.getElementById("procOPT").textContent = optMMU.symbolTable.length
         document.getElementById("simTOPT").textContent = optMMU.clock + "s"
         document.getElementById("RAMOPT").textContent = optMMU.ram / 1000
-        document.getElementById("RAMPOPT").textContent = parseFloat(((optMMU.ram/40960)*100).toFixed(1)) + "%"
+        document.getElementById("RAMPOPT").textContent = parseFloat(((optMMU.ram/400000)*100).toFixed(1)) + "%"
         document.getElementById("VRAMOPT").textContent = optMMU.vram / 1000
         document.getElementById("VRAMPOPT").textContent = parseFloat(((optMMU.vram/optMMU.ram)*100).toFixed(1))+ "%"
         document.getElementById("loadOPT").textContent = optMMU.tablaPaginasFisicas.length
@@ -508,7 +538,7 @@ function processNextLine() {
         document.getElementById("procALG").textContent = selectedMMU.symbolTable.length
         document.getElementById("simTALG").textContent = selectedMMU.clock + "s"
         document.getElementById("RAMALG").textContent = selectedMMU.ram / 1000
-        document.getElementById("RAMPALG").textContent = parseFloat(((selectedMMU.ram/40960)*100).toFixed(1)) + "%"
+        document.getElementById("RAMPALG").textContent = parseFloat(((selectedMMU.ram/400000)*100).toFixed(1)) + "%"
         document.getElementById("VRAMALG").textContent = selectedMMU.vram / 1000
         document.getElementById("VRAMPALG").textContent = parseFloat(((selectedMMU.vram/selectedMMU.ram)*100).toFixed(1))+ "%"
         document.getElementById("loadALG").textContent = selectedMMU.tablaPaginasFisicas.length

@@ -628,7 +628,7 @@ class MMU {
 
             // Realizar el reemplazo en tablaPaginasFisicas
             let replacedPage = this.tablaPaginasFisicas[pageToReplace];
-            this.tablaPaginasFisicas[pageToReplace] = pageToPlace;
+            this.tablaPaginasFisicas[pageToReplace] = pagetoPlace;
 
             let pageRSize = 0;
             let pagePSize = 0;
@@ -641,7 +641,7 @@ class MMU {
                         page.pointerPage = (page.idPage * -1) - 1;
                         pageRSize = page.pagePTRSize;
                     }
-                    if (page.idPage == pageToPlace) {
+                    if (page.idPage == pagetoPlace) {
                         // Marcar la nueva página como activa
                         page.flag = 0;
                         pagePSize = page.pagePTRSize;

@@ -350,34 +350,132 @@ function processNextLine() {
             body2.removeChild(body2.lastChild);
         }
 
-        for (var i = 0; i < optMMU.mmuInformation().length; i++) {
+        var x = optMMU.mmuInformation()
+        var y = selectedMMU.mmuInformation();
+        
+
+
+
+        for (var i = 0; i < x.length; i++) {
             var tr = document.createElement("tr");
             tr.id = "trOPT" + i; 
 
-            var tr2 = document.createElement("tr");
-            tr2.id = "trALG" + i; 
 
+            if(x.length < 100 && x[4] != undefined){
+                if(i > x.length && i < 100){
+                    if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
+                        document.getElementById("td" + x[i][4]).style.backgroundColor = "#000000"
+                   
+                }else if(optMMU.tablaPaginasFisicas[i] === -1){
+                    if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
+                        document.getElementById("td" + x[i][4]).style.backgroundColor = "#000000"
+                    
+                }else{
+                    if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
+                        document.getElementById("td" + x[i][4]).style.backgroundColor = colors[x[i][1]]
+                   
+
+                }
+
+            }else if(i<100 && x[4] != undefined){
+
+                if(optMMU.tablaPaginasFisicas[i] === -1 ){
+                    if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
+                        document.getElementById("td" + x[i][4]).style.backgroundColor = "#000000"
+                    
+                }else {
+                    
+                    if(x[i][4] != ' ' && x[i][4] != undefined &&  x[i][4] >= 0)
+                        document.getElementById("td" + x[i][4]).style.backgroundColor = colors[x[i][1]]
+                }
+
+                
+            }
+
+            
+
+            
+         
             for (var j = 0; j < 8; j++) {
-                var td = document.createElement("td");
-                td.style.backgroundColor = colors[optMMU.mmuInformation()[i][1]]
-     
-                td.textContent = optMMU.mmuInformation()[i][j];
 
+                var td = document.createElement("td");
+                td.style.backgroundColor = colors[x[i][1]]
+     
+                td.textContent = x[i][j];
+                console.log(x[i][j])
     
                 tr.appendChild(td);
 
 
+            }
+
+
+            
+
+    
+            body1.appendChild(tr);
+           
+        }
+
+        for (var i = 0; i < y.length; i++) {
+            
+
+            var tr2 = document.createElement("tr");
+            tr2.id = "trALG" + i; 
+       
+
+           
+            if(y[i][4] == 0)
+                console.log("es cero")
+             
+            if(y.length < 100 && y[4] != undefined){
+                if(i > x.length && i < 100){
+                    if(y[i][4] != ' ' && y[i][4] != undefined &&  y[i][4] >= 0)
+                        document.getElementById("tm" + y[i][4]).style.backgroundColor = "#000000"
+                   
+                }else if(optMMU.tablaPaginasFisicas[i] === -1){
+                    if(y[i][4] != ' ' && y[i][4] != undefined &&  y[i][4] >= 0)
+                        document.getElementById("tm" + y[i][4]).style.backgroundColor = "#000000"
+                    
+                }else{
+                    if(y[i][4] != ' ' && y[i][4] != undefined &&  y[i][4] >= 0)
+                        document.getElementById("tm" + y[i][4]).style.backgroundColor = colors[y[i][1]]
+                   
+
+                }
+
+            }else if(i<100 && y[4] != undefined){
+                if(optMMU.tablaPaginasFisicas[i] === -1){
+                    if(y[i][4] != ' ' && y[i][4] != undefined &&  y[i][4] >= 0)
+                        document.getElementById("tm" + y[i][4]).style.backgroundColor = "#000000"
+                    
+                }else{
+                    if(y[i][4] != ' ' && y[i][4] != undefined &&  y[i][4] >= 0)
+                        document.getElementById("tm" + y[i][4]).style.backgroundColor = colors[y[i][1]]
+                }
+
+                
+            }
+
+            
+
+            
+         
+            for (var j = 0; j < 8; j++) {
+
+
                 var td2 = document.createElement("td"); 
-                td2.style.backgroundColor = colors[selectedMMU.mmuInformation()[i][1]]
+                td2.style.backgroundColor = colors[y[i][1]]
      
-                td2.textContent = selectedMMU.mmuInformation()[i][j];
+                td2.textContent = y[i][j];
                 
     
                 tr2.appendChild(td2);
             }
 
-    
-            body1.appendChild(tr);
+
+            
+
             body2.appendChild(tr2);
         }
 
@@ -427,49 +525,7 @@ function processNextLine() {
             document.getElementById("trashPALG").classList = ""
         }
        
-        for(var i = 0; i < 100; i++){
-            if(optMMU.tablaPaginasFisicas.length < 100){
-                if(i > optMMU.tablaPaginasFisicas.length){
-                    document.getElementById("td" + i).style.backgroundColor = "#000000"
-                   
-                }else if(optMMU.tablaPaginasFisicas[i] === -1){
-                    document.getElementById("td" + i).style.backgroundColor = "#000000"
-                    
-                }else{
-                    document.getElementById("td" + i).style.backgroundColor = colors[optMMU.processMRList()[i]]
-                   
-
-                }
-
-            }else{
-                if(optMMU.tablaPaginasFisicas[i] === -1){
-                    document.getElementById("td" + i).style.backgroundColor = "#000000"
-                    
-                }else{
-                    document.getElementById("td" + i).style.backgroundColor = colors[optMMU.processMRList()[i]]
-                }
-            }
-
-            if(selectedMMU.tablaPaginasFisicas.length < 100){
-                if(i > selectedMMU.tablaPaginasFisicas.length){
-                    document.getElementById("tm" + i).style.backgroundColor = "#000000"
-
-                }else if(selectedMMU.tablaPaginasFisicas[i] === -1){
-                    document.getElementById("tm" + i).style.backgroundColor = "#000000"
-                    
-                }else{
-                    document.getElementById("tm" + i).style.backgroundColor = colors[selectedMMU.processMRList()[i]]
-                }
-
-            }else{
-                if(selectedMMU.tablaPaginasFisicas[i] === -1){
-                    document.getElementById("tm" + i).style.backgroundColor = "#000000"
-                    
-                }else{
-                    document.getElementById("tm" + i).style.backgroundColor = colors[selectedMMU.processMRList()[i]]
-                }
-            }
-        }
+        
 
       
 

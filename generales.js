@@ -513,14 +513,15 @@ function processNextLine() {
 
         var thrashingOPT = parseFloat(((optMMU.thrashing/optMMU.clock)*100).toFixed(1))
          //Carga de info OPT
+        
         document.getElementById("procOPT").textContent = optMMU.symbolTable.length
         document.getElementById("simTOPT").textContent = optMMU.clock + "s"
         document.getElementById("RAMOPT").textContent = optMMU.ram / 1000
         document.getElementById("RAMPOPT").textContent = parseFloat(((optMMU.ram/400000)*100).toFixed(1)) + "%"
         document.getElementById("VRAMOPT").textContent = optMMU.vram / 1000
         document.getElementById("VRAMPOPT").textContent = parseFloat(((optMMU.vram/optMMU.ram)*100).toFixed(1))+ "%"
-        document.getElementById("loadOPT").textContent = optMMU.tablaPaginasFisicas.length
-        document.getElementById("unloadOPT").textContent = 100 - optMMU.tablaPaginasFisicas.length
+        document.getElementById("loadOPT").textContent = optMMU.realPages;
+        document.getElementById("unloadOPT").textContent =optMMU.virtualPages;
         document.getElementById("trashOPT").textContent = optMMU.thrashing + "s"
         document.getElementById("trashPOPT").textContent = thrashingOPT + "%"
         document.getElementById("fragOPT").textContent = optMMU.fragmentation/1000 + "KB"
@@ -541,8 +542,8 @@ function processNextLine() {
         document.getElementById("RAMPALG").textContent = parseFloat(((selectedMMU.ram/400000)*100).toFixed(1)) + "%"
         document.getElementById("VRAMALG").textContent = selectedMMU.vram / 1000
         document.getElementById("VRAMPALG").textContent = parseFloat(((selectedMMU.vram/selectedMMU.ram)*100).toFixed(1))+ "%"
-        document.getElementById("loadALG").textContent = selectedMMU.tablaPaginasFisicas.length
-        document.getElementById("unloadALG").textContent = 100 - selectedMMU.tablaPaginasFisicas.length
+        document.getElementById("loadALG").textContent = selectedMMU.realPages;
+        document.getElementById("unloadALG").textContent = selectedMMU.virtualPages;
         document.getElementById("trashALG").textContent = selectedMMU.thrashing + "s"
         document.getElementById("trashPALG").textContent = thrashingALG + "%"
         document.getElementById("fragALG").textContent = selectedMMU.fragmentation/1000 + "KB"
@@ -645,11 +646,11 @@ function generateCells(){
     document.getElementById("procOPT").textContent = optMMU.symbolTable.length
     document.getElementById("simTOPT").textContent = optMMU.clock + "s"
     document.getElementById("RAMOPT").textContent = optMMU.ram / 100
-    document.getElementById("RAMPOPT").textContent = (optMMU.ram / 400)*100 + "%"
+    document.getElementById("RAMPOPT").textContent = (optMMU.ram / 4000)*100 + "%"
     document.getElementById("VRAMOPT").textContent = optMMU.vram / 100
-    document.getElementById("VRAMPOPT").textContent = (optMMU.vram / 400)*100 + "%"
+    document.getElementById("VRAMPOPT").textContent = (optMMU.vram / 4000)*100 + "%"
     document.getElementById("loadOPT").textContent = optMMU.tablaPaginasFisicas.length
-    document.getElementById("unloadOPT").textContent = 100 - optMMU.tablaPaginasFisicas.length
+    document.getElementById("unloadOPT").textContent = optMMU.virtualPages
     document.getElementById("trashOPT").textContent = optMMU.thrashing + "s"
     document.getElementById("trashPOPT").textContent = 0 +  "%"
     document.getElementById("fragOPT").textContent = optMMU.fragmentation
@@ -658,11 +659,11 @@ function generateCells(){
     document.getElementById("procALG").textContent = selectedMMU.symbolTable.length
     document.getElementById("simTALG").textContent = selectedMMU.clock + "s"
     document.getElementById("RAMALG").textContent = selectedMMU.ram / 100
-    document.getElementById("RAMPALG").textContent = (selectedMMU.ram / 400)*100 + "%"
+    document.getElementById("RAMPALG").textContent = (selectedMMU.ram / 4000)*100 + "%"
     document.getElementById("VRAMALG").textContent = selectedMMU.vram / 100
-    document.getElementById("VRAMPALG").textContent = (selectedMMU.vram / 400)*100 + "%"
+    document.getElementById("VRAMPALG").textContent = (selectedMMU.vram / 4000)*100 + "%"
     document.getElementById("loadALG").textContent = selectedMMU.tablaPaginasFisicas.length
-    document.getElementById("unloadALG").textContent = 100 - selectedMMU.tablaPaginasFisicas.length
+    document.getElementById("unloadALG").textContent = selectedMMU.virtualPages
     document.getElementById("trashALG").textContent = selectedMMU.thrashing + "s"
     document.getElementById("trashPALG").textContent = 0 +  "%"
     document.getElementById("fragALG").textContent = selectedMMU.fragmentation

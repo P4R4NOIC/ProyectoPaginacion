@@ -1,0 +1,173 @@
+.body{
+  background-color: #0a001a;
+}
+.boton{
+  margin-left: 25%;
+  margin-top: 10px;
+  display: block;
+  width: 50%;
+  background-color: #ffc6a7;
+  color: black;
+  border-radius: 15px;
+  border-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+
+.boton:hover {
+  color:black;
+  background-color: #f6b1cf;
+  
+  transition: 0.5s;
+  text-decoration: none;
+}
+
+.boton {
+  background:linear-gradient(135deg, #ee2af5, #5ebfe5);
+  border-radius: 35px;
+  border-style: none;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: "Inter UI","SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;
+  font-size: 16px;
+  font-weight:bold;
+  height: 4rem;
+  padding: 0 10px;
+  text-align: center;
+  text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
+  transition: all .5s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.boton:hover {
+  box-shadow: #f883ba 0 1px 30px;
+  transition-duration: .1s;
+}
+
+.table {
+  border-collapse: collapse;
+  margin-left: 5%;
+  width: 100px; /* Set a fixed width for the table */
+ 
+}
+
+.table-container {
+  display: flex; /* Use flexbox to arrange tables */
+ 
+}
+.table td {
+  
+  background-color: rgb(22, 22, 22);
+  border: 1px solid #000000; /* Square borders */
+  text-align: center; /* Center the content */
+}
+.table-dark {
+  background-color: #9e0337; /* Dark background for the table */
+}
+
+.table th{
+  text-align: center;
+  
+}
+
+
+
+.table {
+  border-collapse: collapse;
+  margin-left: 5%;
+  width: 800px; /* Set a fixed width for the table */
+  color:white;
+  overflow-y: scroll;
+  
+}
+
+.table-container {
+  display: flex; /* Use flexbox to arrange tables */
+
+ 
+}
+.table td {
+  background-color: #161616;
+  border: 1px solid #000000; /* Square borders */
+  text-align: center; /* Center the content */
+}
+.table-dark {
+  background-color: #ff0000; /* Dark background for the table */
+}
+
+.table th{
+  text-align: center;
+  
+}
+
+.scrollableTable{
+    overflow-y: scroll;
+    height: 300px;
+    width: 44%;
+    margin-bottom: 20px;
+    margin-left: 55px;
+    
+}
+
+
+td.verde {
+  background-color: #ffffff; 
+ 
+}
+
+td.amarillo{
+  background-color: rgb(219, 211, 105); 
+}
+
+td.rosa{
+  background-color: rgb(243, 133, 133); 
+}
+
+td.rojo{
+  background-color: rgb(214, 46, 46); 
+}
+
+
+td.azul{
+  background-color: rgb(105, 122, 219); 
+}
+
+td.naranja{
+  background-color: rgb(214, 90, 33); 
+}
+
+td.negro{
+  background-color: rgb(0, 0, 0); 
+  
+}
+
+.tabelPages{
+  overflow: scroll;
+  height: 100px;
+}
+
+.init{
+    display: flex;
+
+}
+
+.contenedor{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  justify-content: space-between;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 20px;
+  width: 600px;
+  box-shadow: 4px 4px 15px rgb(0, 0, 0, 0.3);
+}   
